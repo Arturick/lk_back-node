@@ -6,7 +6,7 @@ class User {
     async register(req, res, next){
         try  {
             const {phone, code} = req.body;
-            let answer = await userModule.register(phone, code);
+            let answer = await userModule.register(phone.replace('+','').replace(' ', '').replace('-','').replace('-', '').replace(' ', ''), code);
             res.cookie('refreshToken', answer.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(answer);
 
