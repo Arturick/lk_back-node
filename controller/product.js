@@ -1,5 +1,6 @@
 const answer = require("../service/Answer");
 const productModule = require("../module/product");
+const userDB = require('../dto/user');
 class Product {
     async findByArticle(req, res, next){
 
@@ -48,7 +49,9 @@ class Product {
     async getBuyout(req, res, next){
 
         try {
-            const {task1, sort, group} = req.body;
+            const {id, sort, group} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.getBuyout(task1, sort, group);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -58,7 +61,9 @@ class Product {
 
     async getDraft(req, res, next){
         try {
-            const {task1, group} = req.body;
+            const {id, group} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.getDraft(task1, group);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -69,7 +74,9 @@ class Product {
     async getDelete(req, res, next){
 
         try {
-            const {task1, id} = req.body;
+            const {userId, id} = req.body;
+            let task1 = await userDB.getById(+userId);
+            task1 = +task1[0]['task1'];
             let response = await productModule.getDelete(task1, id);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -79,7 +86,9 @@ class Product {
 
     async setReview(req, res, next){
         try {
-            const {task1, item} = req.body;
+            const {id, item} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.saveReview(task1, item);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -89,7 +98,9 @@ class Product {
 
     async  getDelivery(req, res, next){
         try {
-            const {task1, date_get} = req.body;
+            const {id, date_get} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             console.log(req.body);
             let response = await productModule.getDelivery(task1, date_get);
             return res.json(answer.product(response));
@@ -111,7 +122,9 @@ class Product {
     async getReview(req, res, next){
 
         try {
-            const {task1, article} = req.body;
+            const {id, article} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.getReview(task1, article);
             console.log(response);
             return res.json(answer.product(response));
@@ -123,7 +136,9 @@ class Product {
     async getProductByApi(req, res, next){
 
         try {
-            const {task1} = req.body;
+            const {id,} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.getProductByApi(task1);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -134,7 +149,9 @@ class Product {
     async save(req, res, next){
 
         try {
-            const {task1, items} = req.body;
+            const {id, items} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.save(task1, items);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -144,7 +161,9 @@ class Product {
 
     async updateDraft(req, res, next){
         try {
-            const {task1, group, items} = req.body;
+            const {id, group, items} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.updateDraft(task1, group, items);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -155,7 +174,9 @@ class Product {
     async draftSave(req, res, next){
 
         try {
-            const {task1, items} = req.body;
+            const {id, items} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.saveDraft(task1, items);
             return res.json(answer.product(response));
         } catch  (e) {
@@ -166,7 +187,9 @@ class Product {
     async getGraph(req, res, next){
 
         try {
-            const {task1} = req.body;
+            const {id,} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
             let response = await productModule.getGraph(task1);
             return res.json(response);
         } catch  (e) {
@@ -176,8 +199,10 @@ class Product {
 
     async getReport(req, res, next){
         try {
-            const {task1} = req.body;
-            let response = await productModule.reportBuyout(5122022, 4);
+            const {id, type, dates} = req.body;
+            let task1 = await userDB.getById(+id);
+            task1 = +task1[0]['task1'];
+            let response = await productModule.reportBuyout(task1, type, dates);
             return res.json(response);
         } catch  (e) {
             next(e);

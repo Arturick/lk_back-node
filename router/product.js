@@ -2,6 +2,7 @@ const Router = require('express').Router;
 const router = new Router();
 const multer = require('multer');
 const controller = require('../controller/product');
+const user = require('../controller/user');
 
 let storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -33,7 +34,11 @@ router.post("/graphInfo", controller.getGraph);
 router.post("/sortBuyByDate", controller.sortBuyByDate);
 router.post("/updateReview", controller.setReview);
 router.post("/parseExcel", type, controller.parseExcel);
-router.get("/rp", controller.getReport);
-
+router.post("/reportBuyout", controller.getReport);
+router.post("/register", user.register);
+router.post("/login", user.login);
+router.post("/sendCode", user.sendCode);
+router.post("/getProfile", user.getProfile);
+router.post("/updateProfile", user.updateProfile);
 
 module.exports = router;

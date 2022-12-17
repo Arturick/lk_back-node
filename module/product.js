@@ -103,7 +103,7 @@ class product {
             throw ApiError.BadRequest(errorText.noData);
         }
         let products = [];
-        let article = articles.split(/\\n| |\,|\//);
+        let article = articles.split(/\n| |,|\//);
         for(let i of article){
             console.log(i);
             let product = await productService.findProductByArt(i);
@@ -491,7 +491,6 @@ class product {
             3: 'за сегодняшний день',
             4: 'за месяц',
             5: `c ${dates[0].toLocaleDateString().split(',')[0]} по ${dates[1].toLocaleDateString().split(',')[0]}}`,
-
         }
         let ws = wb.addWorksheet('Sheet 1');
         ws.cell(1, 1, 1, 4, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
@@ -650,7 +649,7 @@ class product {
         ws.cell(products.length+4, 8).string(`${totalSum}`)
 
 
-        wb.write('Excel.xlsx');
+        wb.write(`Отчет по выкупам за ${title[type]} ${Math.random()}.xlsx`);
         return {};
     }
 }
