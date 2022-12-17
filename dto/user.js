@@ -8,7 +8,7 @@ const connection    = mysql.createPool({
 
 class User {
     async register(task1, phone){
-        let sqlScript = `INSERT INTO client_date (task1, phone) VALUES (${task1}, ${phone})`;
+        let sqlScript = `INSERT INTO client_data (task1, phone) VALUES (${task1}, '${phone}')`;
 
         await connection.query(sqlScript);
     }

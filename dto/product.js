@@ -10,7 +10,7 @@ const connection    = mysql.createPool({
 class Product {
     async getBuyout(task1, sort, group = false){
         let sqlScript = ``;
-
+        let already = [];
         switch (sort) {
             case 1:
                 sqlScript = group ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article` : `SELECT COUNT(*) as plan, date_add as date, status FROM client ct WHERE  task1 = ${task1} GROUP by ct.group`;
@@ -74,25 +74,25 @@ class Product {
 
 
             } else {
-                if(answer[0].length > 0){
-                    for(let i of answer[0]){
+
+                for(let i of answer[0]){
 
                         let product = await connection.query(`SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8)`);
-                        console.log(product[0]);
+                        already.push(i['article']);
                         i['fact'] = product[0][0]['cnt'];
                         i['date'] = `${i['date'].getFullYear()}-${i['date'].getMonth() + 1}-${i['date'].getDate()}`;
                         product = await connection.query(`SELECT COUNT(*) as cnt FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1}`);
                         i['plan'] += product[0][0]['cnt'];
                         products.push(i);
                     }
-                } else {
-                    answer = await connection.query(`SELECT *, COUNT(*) as plan, date_add as date, status FROM client_temp ct WHERE  task1 = ${task1} GROUP by ct.group`);
-                    for(let i of answer[0]){
-                        i['fact'] = 0;
-                        i['date'] = `${i['date'].getFullYear()}-${i['date'].getMonth() + 1}-${i['date'].getDate()}`;
-                        products.push(i);
-                    }
+                answer = await connection.query(`SELECT *, COUNT(*) as plan, date_add as date, status FROM client_temp ct WHERE  task1 = ${task1} GROUP by ct.group`);
 
+                for(let i of answer[0]){
+                    console.log(i['article']);
+                    if(already.indexOf(i['article']) != -1){continue;}
+                    i['fact'] = 0;
+                    i['date'] = `${i['date'].getFullYear()}-${i['date'].getMonth() + 1}-${i['date'].getDate()}`;
+                    products.push(i);
                 }
 
             }
