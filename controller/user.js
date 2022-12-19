@@ -54,8 +54,8 @@ class User {
 
     async sendCode(req, res, next){
         try {
-            const {phone} = req.body;
-            let answer = await userModule.sendCode(phone);
+            const {phone, reg} = req.body;
+            let answer = await userModule.sendCode(phone, reg);
             return res.json(answer);
         } catch (e) {
             next(e);

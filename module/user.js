@@ -78,12 +78,19 @@ class User {
 
     }
 
-    async sendCode(phone){
+    async sendCode(phone, isReg){
         if(!phone){
             console.log('403');
         }
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
-        await codeS.saveCode(phone, code);
+        if(isReg){
+            let pass = '12345678',
+                login = 'lesha LOX';
+            await codeS.saveCode(phone, code, isReg);
+        } else {
+            await codeS.saveCode(phone, code, isReg);
+        }
+
 
         return {}
     }
