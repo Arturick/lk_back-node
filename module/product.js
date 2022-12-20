@@ -221,7 +221,6 @@ class product {
             })
         }
         let articles = [];
-        console.log(data);
         for(let i = 2; i < data.length; i++){
             articles.push({});
             let isAtr = !data[i]['RATE THIS \r\nPROMOTION'] || data[i]['RATE THIS \r\nPROMOTION'].length < 2,
@@ -229,6 +228,7 @@ class product {
                 isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (995) 921-12-10, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
                 isCount = !data[i].__EMPTY_1 || data[i].__EMPTY_1,
                 isRcount = !data[i].__EMPTY_1 || data[i].__EMPTY_2;
+            console.log(data[i]);
             if(isAtr || isBarode || isQuery || isCount || isRcount){
                 return {line: i, ers: true};
                 fs.unlinkSync(`${process.cwd()}/articles.xlsx`);
