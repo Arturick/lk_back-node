@@ -225,21 +225,21 @@ class product {
             articles.push({});
             let isAtr = !data[i]['RATE THIS \r\nPROMOTION'] || data[i]['RATE THIS \r\nPROMOTION'].length < 2,
                 isBarode = !data[i].__EMPTY || data[i].__EMPTY.length < 2,
-                isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (995) 921-12-10, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
+                isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
                 isCount = !data[i].__EMPTY_1 || data[i].__EMPTY_1,
                 isRcount = !data[i].__EMPTY_1 || data[i].__EMPTY_2;
             console.log(data[i]['RATE THIS \r\nPROMOTION']);
             console.log(data[i].__EMPTY);
             console.log(data[i].__EMPTY_1);
             console.log(data[i].__EMPTY_2);
-            console.log(data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (995) 921-12-10, Телегграм: https://t.me/RATE_THISbot,']);
+            console.log(data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,']);
             if(isAtr || isBarode || isQuery || isCount || isRcount){
                 return {line: i, ers: true};
                 fs.unlinkSync(`${process.cwd()}/articles.xlsx`);
             }
             articles[articles.length - 1]['art'] =  data[i]['RATE THIS \r\nPROMOTION'];
             articles[articles.length - 1]['barcode'] =  data[i].__EMPTY;
-            articles[articles.length - 1]['query'] =  data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (995) 921-12-10, Телегграм: https://t.me/RATE_THISbot,'];
+            articles[articles.length - 1]['query'] =  data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'];
             articles[articles.length - 1]['count'] =  data[i].__EMPTY_1;
             articles[articles.length - 1]['rcount'] =  data[i].__EMPTY_2;
         }
