@@ -210,7 +210,8 @@ class product {
         let data = []
 
         const sheets = file.SheetNames
-
+        console.log(file);
+        console.log(sheets);
         for(let i = 0; i < sheets.length; i++)
         {
             const temp = reader.utils.sheet_to_json(
