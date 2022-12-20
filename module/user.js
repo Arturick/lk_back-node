@@ -1,6 +1,7 @@
 const userDB = require('../dto/user');
 const codeS = require('../service/Code')
 const tokenS = require('../service/Token');
+const generator = require('generate-password');
 
 class User {
     async register(phone, code){
@@ -19,7 +20,7 @@ class User {
             await tokenS.saveToken(isPhone[0]['id'], tokens['refreshToken']);
             return {...tokens, id: isPhone[0]['id']};
         }
-        let task1 = Math.floor(Math.random() * (9999999999 - 1111111111) + 1111111111);
+        let task1 = Math.floor(Math.random() * (999999 - 111111) + 111111);
         await userDB.register(task1, phone);
         let user = await userDB.getByTask1(task1);
         const tokens = await tokenS.generateTokens(user[0]['id']);
@@ -84,9 +85,15 @@ class User {
         }
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
         if(isReg){
-            let pass = '12345678',
-                login = 'lesha LOX';
-            await codeS.saveCode(phone, code, isReg);
+            let pass = generator.generateMultiple(3, {
+                length: 10,
+                numbers: true,
+                uppercase: true
+            }),
+                login = phone.replace('+', '').replace('(', '').replace(')', '').replace('-', '').replace('-', '').replace(' ', '');
+            let task1 = Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
+            await codeS.saveCode(login, code, pass);
+            await userDB.register(task1, login, pass);
         } else {
             await codeS.saveCode(phone, code, isReg);
         }

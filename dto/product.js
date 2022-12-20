@@ -13,7 +13,7 @@ class Product {
         let already = [];
         switch (sort) {
             case 1:
-                sqlScript = group ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article` : `SELECT *, COUNT(*) as plan, date_add as date, status FROM client ct WHERE  task1 = ${task1} GROUP by ct.group`;
+                sqlScript = group ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article, \`size\`` : `SELECT *, COUNT(*) as plan, date_add as date, status FROM client ct WHERE  task1 = ${task1} GROUP by ct.group`;
                 break;
             case 2:
                 sqlScript = group ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = ${group} AND task1 = ${task1} GROUP by grafik` : `SELECT *, COUNT(*) as plan, date_add as date, status FROM client ct WHERE  task1 = ${task1} GROUP by ct.group`;
@@ -51,25 +51,25 @@ class Product {
                         products.push(i);
                     }
                 } else {
-                    sqlScript = sort == 1 ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article` : `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1} GROUP by grafik`;
+                    sqlScript = sort == 1 ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article, \`size\`` : `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1} GROUP by grafik`;
                     answer = await connection.query(sqlScript);
 
                     for(let i of answer[0]){
-                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']}` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND grafik = '${i['grafik']}' `;
+                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']} AND \`size\` = '${i['size']}' ` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND grafik = '${i['grafik']}' `;
                         let product = await connection.query(sqlScript);
                         i['fact'] = product[0][0]['cnt'];
-                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1}  AND grafik= '${i['grafik']}'`;
+                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1}  AND grafik= '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         i['plan'] += +product[0][0]['cnt'];
                         i['ids'] = [];
-                        i['date'] = i['date'].toLocaleString().split(',')[0];
-                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}` : `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        i['date'] = i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
+                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         console.log(sqlScript);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
                         }
-                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}` : `SELECT id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
@@ -84,13 +84,13 @@ class Product {
                 for(let i of answer[0]){
 
                         let product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8)`);
-                        already.push(i['article']);
+                        already.push(i['group']);
                         i['fact'] = product[0][0]['cnt'];
                         console.log(i);
                         if(!i['date_add']){
                             i['date_add'] = new Date();
                         }
-                        i['date'] = i['date_add'].toLocaleString().split(',')[0];
+                        i['date'] = i['date_add'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
                         product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1}`);
                         i['plan'] += product[0][0]['cnt'];
                         products.push(i);
@@ -98,10 +98,10 @@ class Product {
                 answer = await connection.query(`SELECT *, COUNT(*) as plan, date_add as date, status FROM client_temp ct WHERE  task1 = ${task1} GROUP by ct.group`);
 
                 for(let i of answer[0]){
-                    console.log(i['article']);
+                    console.log(i['group']);
                     if(already.indexOf(i['article']) != -1){continue;}
                     i['fact'] = 0;
-                    i['date'] = i['date_add'].toLocaleString().split(',')[0];
+                    i['date'] = i['date_add'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
                     products.push(i);
                 }
 

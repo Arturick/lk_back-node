@@ -34,9 +34,9 @@ let description = wb.createStyle({
     },
 });
 class product {
-    async #getUser(task1){
+    async #getUser(id){
         let user = {};
-        user = await  userDTO.getByTask1(task1);
+        user = await  userDTO.getById(id);
         if(user.length < 1){
             console.log('user not find');
         }
@@ -163,12 +163,13 @@ class product {
         return {headers: headers, products: products};
     }
 
-    async getProductByApi(task1){
-        if(!task1){
+    async getProductByApi(id){
+        if(!id){
             throw ApiError.BadRequest(errorText.noData);
         }
 
-        let token = await this.#getUser(task1);
+        let token = await this.#getUser(id);
+        console.log(token, id);
         token = token['wb_api_key'];
 
         let products = await productService.getProductsByApi(token);
@@ -224,7 +225,7 @@ class product {
             articles.push({});
             let isAtr = !data[i]['RATE THIS \r\nPROMOTION'] || data[i]['RATE THIS \r\nPROMOTION'].length < 2,
                 isBarode = !data[i].__EMPTY || data[i].__EMPTY.length < 2,
-                isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
+                isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (995) 921-12-10, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
                 isCount = !data[i].__EMPTY_1 || data[i].__EMPTY_1,
                 isRcount = !data[i].__EMPTY_1 || data[i].__EMPTY_2;
             if(isAtr || isBarode || isQuery || isCount || isRcount){
@@ -233,7 +234,7 @@ class product {
             }
             articles[articles.length - 1]['art'] =  data[i]['RATE THIS \r\nPROMOTION'];
             articles[articles.length - 1]['barcode'] =  data[i].__EMPTY;
-            articles[articles.length - 1]['query'] =  data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'];
+            articles[articles.length - 1]['query'] =  data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (995) 921-12-10, Телегграм: https://t.me/RATE_THISbot,'];
             articles[articles.length - 1]['count'] =  data[i].__EMPTY_1;
             articles[articles.length - 1]['rcount'] =  data[i].__EMPTY_2;
         }
@@ -408,8 +409,8 @@ class product {
             'current' : current,
             'count' : cnt,
             'sum' : totalSum,
-            'update_date' : new Date().toLocaleDateString().split(',')[0],
-            'update_time' : new Date().toLocaleDateString().split(',')[0],
+            'update_date' : new Date().toLocaleDateString().replace('/', '-').replace('/', '-').replace('\\', '-').replace('\\', '-').replace('.', '-').replace('.', '-').split(',')[0],
+            'update_time' : new Date().toLocaleDateString().replace('/', '-').replace('/', '-').replace('\\', '-').replace('\\', '-').replace('.', '-').replace('.', '-').split(',')[0],
     };
     }
 

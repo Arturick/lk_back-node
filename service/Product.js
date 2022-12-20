@@ -5,6 +5,7 @@ class ProductService {
     async getProductsByApi(token){
 
         let link = `https://suppliers-api.wildberries.ru/api/v2/stocks?search= &skip=0&take=98`;
+        console.log(token);
         let product = await axios.get(link, {headers: {"authorization": token}})
             .then(data => {
                 return data['data']['stocks'];
@@ -155,7 +156,7 @@ class ProductService {
                     {"name" : "Пол", "key" : 'sex', "text" : "Пол", "value" : 'sex', 'sortable' : false},
                     {"name" : "Дата выкупа", "key" : 'date', "text" : "Дата выкупа", "value" : 'date', 'sortable' : true},
                     {"name" : "Статус", "key" : 'status', "text" : "Статус", "value" : 'status', 'sortable' : true},
-                        {"text": "", "value": 'actions', 'sortable': false}];
+                            {"name" : "", "key" : 'del', "text" : "", "value" : 'del', 'sortable' : true},];
 
                         break;
 

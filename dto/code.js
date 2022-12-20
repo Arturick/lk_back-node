@@ -15,7 +15,7 @@ class Code {
     async checkCode(phone, code){
         let sqlScript = `SELECT * FROM code_access WHERE phone = '${phone}' AND code = '${code}'`;
         let product = await connection.query(sqlScript);
-        return product[0][0];
+        return product[0][product[0].length - 1];
     }
 }
 

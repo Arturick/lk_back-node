@@ -7,14 +7,15 @@ const connection    = mysql.createPool({
 }).promise();
 
 class User {
-    async register(task1, phone){
-        let sqlScript = `INSERT INTO client_data (task1, phone) VALUES (${task1}, '${phone}')`;
+    async register(task1, phone, pass = false){
+
+        let sqlScript = pass ? `INSERT INTO client_data (task1, phone, login, password) VALUES (${task1}, '${phone}', '${phone}', '${pass}')` : `INSERT INTO client_data (task1, phone) VALUES (${task1}, '${phone}')`;
 
         await connection.query(sqlScript);
     }
 
     async login(login, password){
-        let sqlScript = `SELECT * FROM client_data WHERE login = ${login} AND password = ${password}`;
+        let sqlScript = `SELECT * FROM client_data WHERE login = ${login} AND password = '${password}'`;
 
         let product = await connection.query(sqlScript);
         return product[0];

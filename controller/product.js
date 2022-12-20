@@ -136,10 +136,8 @@ class Product {
     async getProductByApi(req, res, next){
 
         try {
-            const {id,} = req.body;
-            let task1 = await userDB.getById(+id);
-            task1 = +task1[0]['task1'];
-            let response = await productModule.getProductByApi(task1);
+            const {id} = req.body;
+            let response = await productModule.getProductByApi(id);
             return res.json(answer.product(response));
         } catch  (e) {
             next(e);
