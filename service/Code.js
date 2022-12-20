@@ -4,7 +4,7 @@ const axios = require('axios');
 class Code {
     async saveCode(phone, code, password = false){
         let text = password ? `Добро пожаловать в RATE-THIS! \n Код для входа в личный кабинет ${code} \n Логин для входа: ${phone}\n Пороль для входа: ${password}\nЕсли это не вы сообщите нам! https://t.me/ratethisgroup` : `Добро пожаловать в RATE-THIS! \n Код для входа в личный кабинет ${code} \nЕсли это не вы сообщите нам! https://t.me/ratethisgroup`;
-        console.log(text);
+        console.log(phone.replace('+','').replace(' ', '').replace('-','').replace('-', ''));
         await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone.replace('+','').replace(' ', '').replace('-','').replace('-', '')}&text=${text}&login=rate-this&password=KoBe6263`)
         await codeDB.setCode(phone.replace('+','').replace(' ', '').replace('-',''), code);
     }
