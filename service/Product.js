@@ -141,7 +141,6 @@ class ProductService {
                     {"text" : "Кол-во план", "value" : 'plan', 'sortable' : false},
                     {"text" : "Кол-во факт", "value" : 'fact', 'sortable' : false},
                             {"name" : "Статус", "key" : 'status', "text" : "Статус", "value" : 'status', 'sortable' : true},
-
                             {"text": "", "value": 'action', 'sortable': false}];
 
                         break;
@@ -217,7 +216,6 @@ class ProductService {
                 {"name" : "Кол-во выкупов", "key" : 'count', "text" : "Кол-во выкупов", "value" : 'count', 'sortable' : false},
                 {"name" : "Кол-во отзывов", "key" : 'rcount', "text" : "Кол-во отзывов", "value" : 'rcount', 'sortable' : false},
                 {"name" : "Запрос", "key" : 'query', "text" : "Запрос", "value" : 'query', 'sortable' : false},
-                {"name" : "Позиция", "key" : 'position', "text" : "Позиция", "value" : 'position', 'sortable' : false},
                 {"name" : "Пол", "key" : 'gender', "text" : "Пол", "value" : 'gender', 'sortable' : false},
                 {"name" : "", "key" : 'copy', "value" : 'copy', 'sortable' : false},
                 {"name" : "", "key" : 'del', "value" : 'del', 'sortable' : false}];

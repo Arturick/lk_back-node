@@ -192,6 +192,7 @@ class product {
 
             for(let i of product2['data']['products'][0]['sizes']){
                 sizes.push(i['origName'])
+
             }
             i['sizes'] = sizes ;
             i['art'] = i['nmId'];
@@ -221,13 +222,22 @@ class product {
         console.log(data);
         for(let i = 2; i < data.length; i++){
             articles.push({});
+            let isAtr = !data[i]['RATE THIS \r\nPROMOTION'] || data[i]['RATE THIS \r\nPROMOTION'].length < 2,
+                isBarode = !data[i].__EMPTY || data[i].__EMPTY.length < 2,
+                isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
+                isCount = !data[i].__EMPTY_1 || data[i].__EMPTY_1,
+                isRcount = !data[i].__EMPTY_1 || data[i].__EMPTY_2;
+            if(isAtr || isBarode || isQuery || isCount || isRcount){
+                return {line: i, ers: true};
+                fs.unlinkSync(`${process.cwd()}/articles.xlsx`);
+            }
             articles[articles.length - 1]['art'] =  data[i]['RATE THIS \r\nPROMOTION'];
             articles[articles.length - 1]['barcode'] =  data[i].__EMPTY;
             articles[articles.length - 1]['query'] =  data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'];
             articles[articles.length - 1]['count'] =  data[i].__EMPTY_1;
             articles[articles.length - 1]['rcount'] =  data[i].__EMPTY_2;
         }
-        fs.unlinkSync('D:\\Work\\back-rate_this\\articles.xlsx');
+        fs.unlinkSync(`${process.cwd()}/articles.xlsx`);
         return articles;
     }
 
@@ -375,22 +385,31 @@ class product {
         }
         let seller1 = await productDTO.getGraph(task1, false);
         let seller2 = await productDTO.getGraph(task1, true);
-        let last = [];
-        let current = [];
+        let last = [0,0,0,0,0,0,0];
+        let current = [0,0,0,0,0,0,0];
+        let cnt = 0,
+            totalSum = 0;
+        let dates = [];
+        console.log(seller2)
         for(let i of seller1){
-            last.push(i['cnt']);
+            cnt+= +i['cnt'];
+            totalSum = +i['cnt'] * i['price'];
+            last[i['date_buy'].getDay()] = i['cnt'];
+            //date_buy
         }
         for(let i of seller2){
-            current.push(i['cnt']);
+            cnt+= +i['cnt'];
+            totalSum = +i['cnt'] * i['price'];
+            current[i['date_buy'].getDay()] = i['cnt'];
         }
-        let count = 0;
+
         return {
             'last' : last,
             'current' : current,
-            'count' : count,
-            'sum' : 0,
-            'update_date' : new Date(),
-            'update_time' : new Date(),
+            'count' : cnt,
+            'sum' : totalSum,
+            'update_date' : new Date().toLocaleDateString().split(',')[0],
+            'update_time' : new Date().toLocaleDateString().split(',')[0],
     };
     }
 
