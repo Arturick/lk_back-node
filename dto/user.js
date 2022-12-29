@@ -7,9 +7,9 @@ const connection    = mysql.createPool({
 }).promise();
 
 class User {
-    async register(task1, phone, pass = false){
+    async register(phone, name, surname, task1, pass = false){
 
-        let sqlScript = pass ? `INSERT INTO client_data (task1, phone, login, password) VALUES (${task1}, '${phone}', '${phone}', '${pass}')` : `INSERT INTO client_data (task1, phone) VALUES (${task1}, '${phone}')`;
+        let sqlScript = pass ? `INSERT INTO client_data (task1, phone, login, password, u_name, u_surname) VALUES (${task1}, '${phone}', '${phone}', '${pass}', '${name}', '${surname}')` : `INSERT INTO client_data (task1, phone) VALUES (${task1}, '${phone}')`;
 
         await connection.query(sqlScript);
     }
@@ -32,7 +32,7 @@ class User {
         let sqlScript = `SELECT * FROM client_data WHERE id = ${id}`;
 
         let product = await connection.query(sqlScript);
-        return product[0];
+        return product[0][0];
     }
 
     async getByTask1(task1){
@@ -46,6 +46,18 @@ class User {
         let sqlScript = `UPDATE client_data SET wb_api_key = '${profile['wb_api_key']}', u_name = '${profile['u_name']}', u_surname = '${profile['u_surname']}' WHERE id = ${profile['id']}`;
         await connection.query(sqlScript);
 
+    }
+
+    async resetPassword(name, surname, phone, task1, pass){
+        let sqlScript = `UPDATE client_data SET password = '${pass}' WHERE u_name = '${name}' AND u_surname = '${surname}' AND phone = '${phone}' AND task1 = ${task1}`;
+
+        await connection.query(sqlScript);
+    }
+
+    async getUser(name, surname, phone, task1){
+        let sqlScript = `SELECT * FROM client_data WHERE  phone = '${phone}' OR task1 = ${task1}`;
+        let answer = await connection.query(sqlScript);
+        return answer[0];
     }
 }
 

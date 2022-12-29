@@ -2,7 +2,7 @@ const axios = require('axios');
 const productDTO = require('../dto/product');
 const userDTO = require('../dto/user');
 const productService = require('../service/Product');
-const reader = require('xlsx');
+const xlsxFile = require('read-excel-file/node');
 const ApiError = require('../exeption/error');
 var fs = require('fs');
 const errorText = require('../data/error-text');
@@ -117,24 +117,21 @@ class product {
         return {headers: headers, products: products};
     }
 
-    async getBuyout(task1, sort, group){
-        if(!task1 || !sort){
+    async getBuyout(user, sort, group){
+        if(!sort){
             throw ApiError.BadRequest(errorText.noData);
         }
 
-        let products = await productDTO.getBuyout(task1, sort, group);
+        let products = await productDTO.getBuyout(user['task1'], sort, group);
         products = await productService.setStatusProduct(products, 'buyout', sort, group);
         let headers = await productService.getHeader('buyout', sort, group);
 
         return {headers: headers, products: products};
     }
 
-    async getDelivery(task1, date_get){
-        if(!task1){
-            throw ApiError.BadRequest(errorText.noData);
-        }
-        console.log(date_get);
-        let products = await productDTO.getDelivery(task1, date_get);
+    async getDelivery(user, date_get){
+
+        let products = await productDTO.getDelivery(user['task1'], date_get);
         products = await productService.setStatusProduct(products, 'delivery', 1, date_get);
 
         let headers = await productService.getHeader('delivery', 1, date_get);
@@ -142,58 +139,35 @@ class product {
         return {headers: headers, products: products};
     }
 
-    async getDelete(task1, id){
-        if(!task1 || !id){
-            throw ApiError.BadRequest(errorText.noData);
-        }
-
-        await productDTO.deleteProduct(task1, id);
+    async getDelete(user, id){
+        await productDTO.deleteProduct(user['task1'], id);
         return {};
     }
 
-    async getReview(task1, article){
-        if(!task1){
-            throw ApiError.BadRequest(errorText.noData);
-        }
-
-        let products = await productDTO.getReview(task1, article);
+    async getReview(user, article){
+        let products = await productDTO.getReview(user['task1'], article);
         products = await productService.setStatusProduct(products, 'review', 1, article);
         let headers = await productService.getHeader('review', 1, article);
 
         return {headers: headers, products: products};
     }
 
-    async getProductByApi(id){
-        if(!id){
-            throw ApiError.BadRequest(errorText.noData);
-        }
+    async getProductByApi(user){
 
-        let token = await this.#getUser(id);
-        console.log(token, id);
-        token = token['wb_api_key'];
+        let token = user['wb_api_key'];
 
         let products = await productService.getProductsByApi(token);
 
         for(let i of products){
             console.log(i['nmId'])
-            let product2 = await axios.get(`https://card.wb.ru/cards/detail?spp=0&regions=64,83,4,38,80,33,70,82,86,30,69,22,66,31,40,1,48&pricemarginCoeff=1.0&reg=0&appType=1&emp=0&locale=ru&lang=ru&curr=rub&couponsGeo=2,12,7,3,6,21&dest=-1075831,-115135,-1084793,12358353&nm=${+i['nmId']}`)
-                .then(function (res) {
 
-                    return res.data;
-                })
-                .catch(function (error) {
-                    console.log(error);
-                })
-            if(product2['data']['products'].length < 1){
-               continue;
-            }
             i['image'] = `https://images.wbstatic.net/c246x328/new/${Math.floor(+i['nmId']/10000)}0000/${String(+i['nmId'])}-1.jpg`
-            i['price'] = +product2['data']['products'][0]['salePriceU'] / 100;
+
             let sizes = [];
-
-            for(let i of product2['data']['products'][0]['sizes']){
-                sizes.push(i['origName'])
-
+            if(i['sizes']){
+                for(let j of i['sizes']){
+                    sizes.push(i['origName']);
+                }
             }
             i['sizes'] = sizes ;
             i['art'] = i['nmId'];
@@ -206,53 +180,29 @@ class product {
 
     async parseExcel(){
 
-        let file = reader.readFile(`${process.cwd()}/articles.xlsx`);
-        let data = []
-
-        const sheets = file.SheetNames
-        console.log(file);
-        console.log(sheets);
-        for(let i = 0; i < sheets.length; i++)
-        {
-            const temp = reader.utils.sheet_to_json(
-                file.Sheets[file.SheetNames[i]])
-            temp.forEach((res) => {
-                data.push(res)
-            })
-        }
-        let articles = [];
-        for(let i = 2; i < data.length; i++){
+        let data = [],
+            articles = [];
+        data = await xlsxFile(`${process.cwd()}/articles.xlsx`).then((rows) => {
+            return rows;
+        });
+        console.log(data[0]);
+        for(let i = 3; i < data.length; i++){
+            let row = data[i];
             articles.push({});
-            let isAtr = !data[i]['RATE THIS \r\nPROMOTION'] || data[i]['RATE THIS \r\nPROMOTION'].length < 2,
-                isBarode = !data[i].__EMPTY || data[i].__EMPTY.length < 2,
-                isQuery = !data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'] || data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'].length < 2,
-                isCount = !data[i].__EMPTY_1,
-                isRcount = !data[i].__EMPTY_1;
-            console.log(isAtr, data[i]['RATE THIS \r\nPROMOTION']);
-            console.log(isBarode, data[i].__EMPTY);
-            console.log(isCount, data[i].__EMPTY_1);
-            console.log(isRcount, data[i].__EMPTY_2);
-            console.log(isQuery, data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,']);
-            if(isAtr || isBarode || isQuery || isCount || isRcount){
-                return {line: i, ers: true};
-                fs.unlinkSync(`${process.cwd()}/articles.xlsx`);
-            }
-            articles[articles.length - 1]['art'] =  data[i]['RATE THIS \r\nPROMOTION'];
-            articles[articles.length - 1]['barcode'] =  data[i].__EMPTY;
-            articles[articles.length - 1]['query'] =  data[i]['Лучший сервис по комлексной работе с маркетплейсами!\r\nТелефон для связи +7 (499) 113-39-37, Телегграм: https://t.me/RATE_THISbot,'];
-            articles[articles.length - 1]['count'] =  data[i].__EMPTY_1;
-            articles[articles.length - 1]['rcount'] =  data[i].__EMPTY_2;
+            articles[articles.length - 1]['art'] = row[0];
+            articles[articles.length - 1]['barcode'] = row[1];
+            articles[articles.length - 1]['query'] = row[2];
+            articles[articles.length - 1]['count'] = row[3];
+            articles[articles.length - 1]['rcount'] = row[4];
         }
         fs.unlinkSync(`${process.cwd()}/articles.xlsx`);
         return articles;
     }
 
-    async getDraft(task1, group = false){
-        if(!task1){
-            throw ApiError.BadRequest(errorText.noData);
-        }
+    async getDraft(user, group = false){
+
         console.log(group);
-        let products = await productDTO.getDraft(task1, group);
+        let products = await productDTO.getDraft(user['task1'], group);
         products = await productService.setStatusProduct(products, 'buyout', 3, group);
 
         let headers = []
@@ -264,8 +214,8 @@ class product {
         return {headers: headers, products: products};
     }
 
-    async updateDraft(task1, group, items){
-        if(!task1 || !group || !items){
+    async updateDraft(user, group, items){
+        if( !group || !items){
             throw ApiError.BadRequest(errorText.noData);
         }
         console.log(group);
@@ -296,22 +246,20 @@ class product {
 
             }
         }
-        await productDTO.updateDraft(task1, group, products);
+        await productDTO.updateDraft(user['task1'], group, products);
 
         return {};
     }
 
-    async save(task1, items){
+    async save(user, items){
         if(!items){
             throw ApiError.BadRequest(errorText.noData);
         }
-        let user = await this.#getUser(task1);
         let products = [];
         for(let i of items){
 ``
             let commentCount = 0;
             for(let j = 0; j < i.count; j++){
-                console.log(1);
                 products.push({});
                 products[products.length - 1]['article'] = i['article'];
                 products[products.length - 1]['price'] = i['price'];
@@ -334,15 +282,14 @@ class product {
             }
         }
         let group = new Date().getTime();
-        await productDTO.save(task1, products, user, group);
+        await productDTO.save(user['task1'], products, user, group);
         return {}
     }
 
-    async saveDraft(task1, items){
+    async saveDraft(user, items){
         if(!items){
             throw ApiError.BadRequest(errorText.noData);
         }
-        let user = await this.#getUser(task1);
         let products = [];
         for(let i of items){
 
@@ -371,26 +318,24 @@ class product {
             }
         }
         let group = new Date().getTime();
-        await productDTO.draftSave(task1, products, user, group);
+        await productDTO.draftSave(user['task1'], products, user, group);
         return {}
     }
 
-    async saveReview(task1, item){
-        if(!task1 || !item){
+    async saveReview(user, item){
+        if(!item){
             throw ApiError.BadRequest(errorText.noData);
         }
 
-        await productDTO.setReview(task1, item);
+        await productDTO.setReview(user['task1'], item);
 
         return {};
     }
 
-    async getGraph(task1){
-        if(!task1){
-            throw ApiError.BadRequest(errorText.noData);
-        }
-        let seller1 = await productDTO.getGraph(task1, false);
-        let seller2 = await productDTO.getGraph(task1, true);
+    async getGraph(user){
+        console.log(user);
+        let seller1 = await productDTO.getGraph(user['task1'], false);
+        let seller2 = await productDTO.getGraph(user['task1'], true);
         let last = [0,0,0,0,0,0,0];
         let current = [0,0,0,0,0,0,0];
         let cnt = 0,
@@ -506,8 +451,8 @@ class product {
     }
 //    async saveDraft()
 
-    async reportBuyout(task1, type, dates){
-        if(!task1 || !type){
+    async reportBuyout(user, type, dates){
+        if(!type){
             console.log('403');
         }
         let title = {

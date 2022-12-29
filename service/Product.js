@@ -203,7 +203,6 @@ class ProductService {
                 {"name" : "Фото", "key" : 'image', "text" : "Фото", "value" : 'image', 'sortable' : false},
                 {"name" : "Бренд", "key" : 'brand', "text" : "Бренд", "value" : 'brand', 'sortable' : false},
                 {"name" : "Артикул", "key" : 'art', "text" : "Артикул", "value" : 'art', 'sortable' : false},
-                {"name" : "Цена WB", "key" : 'price', "text" : "Цена WB", "value" : 'price_wb', 'sortable' : false},
                 {"name" : "Размер", "key" : 'size', "text" : "Размер", "value" : 'size', 'sortable' : false},
                 {"name" : "Баркод", "key" : 'barcode', "text" : "Баркод", "value" : 'barcode', 'sortable' : false}];
                 break;

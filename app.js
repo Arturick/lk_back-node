@@ -4,6 +4,7 @@ const cors = require('cors');
 const product = require('./router/product');
 const cron = require("node-cron");
 const errorMiddleware = require('./midleware/error');
+const authMiddleware = require('./midleware/auth-middleware');
 const prMd = require('./dto/product');
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors({
     credentials: true,
     origin: '*'
 }));
+
 app.use('/api', product);
 app.use(errorMiddleware);
 
@@ -20,8 +22,8 @@ app.use(errorMiddleware);
 const start = async () => {
 
     try {
-        let task = cron.schedule('10 * * * *', async () => {
-            await prMd.updateDB();
+        let task = cron.schedule('*/1 * * * *', async () => {
+            //await prMd.updateDB();
             console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
         }, {
             scheduled: true,

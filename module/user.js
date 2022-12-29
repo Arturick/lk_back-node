@@ -18,14 +18,14 @@ class User {
         if(isPhone.length > 0){
             const tokens = await tokenS.generateTokens(isPhone[0]['id']);
             await tokenS.saveToken(isPhone[0]['id'], tokens['refreshToken']);
-            return {...tokens, id: isPhone[0]['id']};
+            return {...tokens, userId: isPhone[0]['id']};
         }
         let task1 = Math.floor(Math.random() * (999999 - 111111) + 111111);
-        await userDB.register(task1, phone);
+        await userDB.register(phone, 'user', 'user_surname', task1);
         let user = await userDB.getByTask1(task1);
         const tokens = await tokenS.generateTokens(user[0]['id']);
         await tokenS.saveToken(user[0]['id'], tokens['refreshToken']);
-        return {...tokens, id: user[0]['id']};
+        return {...tokens, userId: user[0]['id']};
     }
 
     async login(login, password){
@@ -43,27 +43,17 @@ class User {
         return {...tokens, id: isAuth[0]['id']};
     }
 
-    async refresh(token){
+    async refresh(userId, token){
        if(!token){
            console.log(403);
        }
-       let isToken = await tokenS.findToken(token);
+       let isToken = await tokenS.findToken(userId, token);
        if(isToken.length < 1){
            throw Error();
        }
-
-    }
-
-    async getProfile(token, id){
-        if(!token){
-            console.log(id, 403);
-        }
-        let isToken = await tokenS.validateRefreshToken(token);
-        if(!isToken) {
-           // throw Error();
-        }
-        let user = await userDB.getById(id);
-        return user[0];
+        const tokens = await tokenS.generateTokens(userId);
+        await tokenS.saveToken(userId, tokens['refreshToken']);
+        return {...tokens, userId: userId};
 
     }
 
@@ -75,27 +65,46 @@ class User {
         return {}
     }
 
-    async logout(){
+    async resetPassword(name, surname, phone, task1) {
+        if (!phone) {
+            console.log(403);
+        }
+
+        let isPhone = await userDB.getUser(name, surname, phone, task1);
+        if (isPhone.length < 1) {
+            return {error: true}
+        }
+        let pass = generator.generateMultiple(3, {
+                length: 6,
+                numbers: true,
+                uppercase: true
+            });
+        let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
+        await codeS.saveCode(phone, code, task1, pass);
+        await userDB.resetPassword(name, surname, phone, task1, pass);
 
     }
 
-    async sendCode(phone, isReg){
+    async sendCode(phone, name, surname, task1){
         if(!phone){
             console.log('403');
         }
+        console.log(phone, name, surname, task1);
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
-        if(isReg){
+        let isPhone = await userDB.getUser(name, surname, phone, task1);
+        console.log(isPhone);
+        if(name && isPhone.length < 1){
             let pass = generator.generateMultiple(3, {
-                length: 10,
+                length: 6,
                 numbers: true,
                 uppercase: true
-            }),
-                login = phone.replace('+', '').replace('(', '').replace(')', '').replace('-', '').replace('-', '').replace(' ', '');
-            let task1 = Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
-            await codeS.saveCode(login, code, pass);
-            await userDB.register(task1, login, pass);
+            });
+            task1 = task1 ? task1 : Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
+            await codeS.saveCode(phone, code, task1, pass);
+            await userDB.register(phone, name, surname, task1, pass);
         } else {
-            await codeS.saveCode(phone, code, isReg);
+
+            await codeS.saveCode(phone, code, isPhone[0]['task1'], isPhone[0]['password']);
         }
 
 

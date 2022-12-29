@@ -6,7 +6,7 @@ class User {
     async register(req, res, next){
         try  {
             const {phone, code} = req.body;
-            let answer = await userModule.register(phone.replace('+','').replace(' ', '').replace('-','').replace('-', '').replace(' ', ''), code);
+            let answer = await userModule.register(phone, code);
             res.cookie('refreshToken', answer.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             return res.json(answer);
 
@@ -28,20 +28,25 @@ class User {
 
     }
 
-    async getProfile(req, res, next){
+    async getProfile(user, req, res, next){
         try {
-            const {token, id} = req.body;
-            console.log(id);
-            let answer = await userModule.getProfile(token, id);
-            return res.json(answer);
+            return res.json(user);
         } catch (e) {
             next(e);
         }
 
     }
 
+    async resetPassword(req, res, next){
+        try {
+            const {name, surname, phone, task1} = req.body;
+            await userModule.resetPassword(name, surname, phone, task1);
+        } catch (e) {
+            next(e)
+        }
+    }
 
-    async updateProfile(req, res, next){
+    async updateProfile(user, req, res, next){
         try {
             const {profile} = req.body;
             let answer = await userModule.updateProfile(profile);
@@ -54,8 +59,8 @@ class User {
 
     async sendCode(req, res, next){
         try {
-            const {phone, reg} = req.body;
-            let answer = await userModule.sendCode(phone, reg);
+            const {phone, name, surname, task1} = req.body;
+            let answer = await userModule.sendCode(phone, name, surname, task1);
             return res.json(answer);
         } catch (e) {
             next(e);

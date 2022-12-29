@@ -13,32 +13,36 @@ let storage = multer.diskStorage({
     }
 })
 
+//import middleware
+const authMiddleware = require('../midleware/auth-middleware');
 
 
 const upload = multer({ storage: storage });
 let type = upload.any();
-router.post("/findByArticle", controller.findByArticle);
-router.get("/getReport", controller.findByArticle);
-router.post("/findByArticles", controller.findByArticles);
-router.post("/findPosition", controller.findPosition);
-router.post("/buyout", controller.getBuyout);
-router.post("/draft", controller.getDraft);
-router.post("/update-draft", controller.updateDraft);
-router.post("/reviews", controller.getReview);
-router.post("/delivery",controller.getDelivery);
-router.post("/delete",controller.getDelete);
-router.post("/saveDraft",controller.draftSave);
-router.post("/getByApi", controller.getProductByApi);
-router.post("/save", controller.save);
-router.post("/graphInfo", controller.getGraph);
-router.post("/sortBuyByDate", controller.sortBuyByDate);
-router.post("/updateReview", controller.setReview);
-router.post("/parseExcel", type, controller.parseExcel);
-router.post("/reportBuyout", controller.getReport);
+router.post("/find-by-article", authMiddleware, controller.findByArticle);
+router.get("/get-report", authMiddleware,  controller.findByArticle);
+router.post("/find-by-articles", authMiddleware,  controller.findByArticles);
+router.post("/find-position", authMiddleware,  controller.findPosition);
+router.post("/buyout", authMiddleware,  controller.getBuyout);
+router.post("/draft", authMiddleware,  controller.getDraft);
+router.post("/update-draft", authMiddleware,  controller.updateDraft);
+router.post("/reviews", authMiddleware,  controller.getReview);
+router.post("/delivery", authMiddleware, controller.getDelivery);
+router.post("/delete", authMiddleware, controller.getDelete);
+router.post("/save-draft", authMiddleware, controller.draftSave);
+router.post("/get-by-api", authMiddleware,  controller.getProductByApi);
+router.post("/save", authMiddleware,  controller.save);
+router.post("/graph-info", authMiddleware,  controller.getGraph);
+router.post("/sort-buy-by-date", authMiddleware,  controller.sortBuyByDate);
+router.post("/update-review", authMiddleware,  controller.setReview);
+router.post("/parse-excel", type, controller.parseExcel);
+router.post("/report-buyout", authMiddleware,  controller.getReport);
+
 router.post("/register", user.register);
 router.post("/login", user.login);
+router.post("/refresh-password", user.resetPassword);
 router.post("/sendCode", user.sendCode);
-router.post("/getProfile", user.getProfile);
-router.post("/updateProfile", user.updateProfile);
+router.post("/getProfile", authMiddleware,  user.getProfile);
+router.post("/updateProfile", authMiddleware,  user.updateProfile);
 
 module.exports = router;

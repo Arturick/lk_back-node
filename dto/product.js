@@ -256,7 +256,7 @@ VALUES ('черновик', 'wb', '${i['type']}', '${i['article']}', '${i['size'
         let mth = date.getMonth() + 1< 10 ? `0${date.getMonth() + 1}`: date.getMonth() + 1;
         date = `${date.getFullYear()}-${mth}-${dt}`;
         console.log(date);
-        let sqlScript = `SELECT * FROM client_temp WHERE article = '64824784'`;
+        let sqlScript = `SELECT * FROM client_temp WHERE article = '545482539'`;
         let answer = await connection.query(sqlScript);
         console.log(answer[0].length);
 
