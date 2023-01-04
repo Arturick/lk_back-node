@@ -45,4 +45,9 @@ router.post("/sendCode", user.sendCode);
 router.post("/getProfile", authMiddleware,  user.getProfile);
 router.post("/updateProfile", authMiddleware,  user.updateProfile);
 
+//
+router.post("/buyout-report", authMiddleware,  controller.buyoutReport);
+router.post("/delivery-report", authMiddleware, controller.deliveryReport);
+router.post("/review-report", authMiddleware, controller.reviewReport);
+router.post("/get-report", authMiddleware, controller.getReport);
 module.exports = router;

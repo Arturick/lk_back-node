@@ -8,6 +8,8 @@ var fs = require('fs');
 const errorText = require('../data/error-text');
 const xl = require('excel4node');
 const wb = new xl.Workbook();
+require('dotenv').config()
+
 let TitleStyle = wb.createStyle({
     alignment: {
         wrapText: true,
@@ -33,6 +35,7 @@ let description = wb.createStyle({
         b: true
     },
 });
+
 class product {
     async #getUser(id){
         let user = {};
@@ -460,7 +463,7 @@ class product {
             2: 'за неделю',
             3: 'за сегодняшний день',
             4: 'за месяц',
-            5: `c ${dates[0].toLocaleDateString().split(',')[0]} по ${dates[1].toLocaleDateString().split(',')[0]}}`,
+            5: dates.length > 0?`c ${dates[0].toLocaleDateString().split(',')[0]} по ${dates[1].toLocaleDateString().split(',')[0]}}` : '',
         }
         let ws = wb.addWorksheet('Sheet 1');
         ws.cell(1, 1, 1, 4, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
@@ -621,6 +624,534 @@ class product {
 
         wb.write(`Отчет по выкупам за ${title[type]} ${Math.random()}.xlsx`);
         return {};
+    }
+
+    async buyoutReport(user, type, dates = []){
+        let reportType = {
+            1: 'За сегодня',
+            2: 'Неделю',
+            3: 'Месяц',
+            4: 'Все время',
+            5: dates.length > 0 ? `c ${dates[0]} по ${dates[1]}` : ``,
+        }
+        console.log(type);
+        let products = await productDTO.getBuyoutReport(user['task1'], type, dates);
+        let ws = wb.addWorksheet('Sheet 1');
+
+        ws.cell(1, 1, 1, 4, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
+        ws.row(1).setHeight(105);
+        ws.cell(1, 5, 1, 8, true).string('Лучший сервис по работе с маркетплейсами!\nТелефон для связи +7 (499) 133-39-37\nСайт : https://rate-this.ru/').style(description);
+        ws.cell(2, 1, 2, 8, true).string(`Отчет по выкупам за ${reportType[type]}`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 1).string(`Артикул`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 2).string(`Дата покупки`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 3).string(`Статус`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 4).string(`Цена`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 5).string(`БарКод`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 6).string(`Наименование`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 7).string(`Колличество`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 8).string(`Бренд`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+
+        let allCount = 0;
+        let allPrice = 0;
+        for(let i =0; i < products.length; i++){
+            let product = products[i];
+            ws.cell(i+4, 1).string(String(product['article']))
+            ws.cell(i+4, 2).string(String(product['date_get'].toLocaleString()))
+            ws.cell(i+4, 3).string(`оплачено`)
+            ws.cell(i+4, 4).string(String(product['price']))
+            ws.cell(i+4, 5).string(String(product['barcode']))
+            ws.cell(i+4, 6).string(String(product['naming']))
+            ws.cell(i+4, 7).string(String(product['cnt']))
+            ws.cell(i+4, 8).string(String(product['brand']))
+            allPrice += product['totalSum'];
+            allCount += product['cnt'];
+        }
+        ws.cell(products.length + 4, 5).string(`Общее колличество`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(products.length + 4, 6).string(String(allCount));
+        ws.cell(products.length + 4, 7).string(`Общая цена`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(products.length + 4, 8).string(String(allPrice));
+        wb.write(process.env.URL_REPORT);
+        await productDTO.setReport(user['task1'], 'buyout', reportType[type]);
+        return {};
+
+    }
+
+    async deliveryReport(user, type, dates= []){
+
+        let reportType = {
+            1: 'За сегодня',
+            2: 'Неделю',
+            3: 'Месяц',
+            4: 'Все время',
+            5: dates.length > 0 ? `c ${dates[0]} по ${dates[1]}` : ``,
+        }
+        let products = await productDTO.getDeliveryReport(user['task1'], type, dates);
+        let ws = wb.addWorksheet('Sheet 1');
+
+        ws.cell(1, 1, 1, 5, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
+        ws.row(1).setHeight(105);
+        ws.cell(1, 6, 1, 10, true).string('Лучший сервис по работе с маркетплейсами!\nТелефон для связи +7 (499) 133-39-37\nСайт : https://rate-this.ru/').style(description);
+        ws.cell(2, 1, 2, 10, true).string(`Отчет по выкупам за ${reportType[type]}`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 1).string(`Артикул`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 2).string(`Дата Получения`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 3).string(`Статус`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 4).string(`Цена`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 5).string(`БарКод`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 6).string(`Наименование`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 7).string(`Колличество`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 8).string(`Бренд`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 9).string(`Колличество поллученных`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 10).string(`Пункт Выдачи`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+
+        let allCount = 0;
+        let allPrice = 0;
+        for(let i =0; i < products.length; i++){
+            let product = products[i];
+            ws.cell(i+4, 1).string(String(product['article']));
+            ws.cell(i+4, 2).string(String(product['date_buy'].toLocaleString()));
+            ws.cell(i+4, 3).string(String(product['status'] != 2 ? 'Ожидает получения' : 'Оплачено'));
+            ws.cell(i+4, 4).string(String(product['price']));
+            ws.cell(i+4, 5).string(String(product['barcode']));
+            ws.cell(i+4, 6).string(String(product['naming']));
+            ws.cell(i+4, 7).string(String(product['cnt']));
+            ws.cell(i+4, 8).string(String(product['brand']));
+            ws.cell(i+4, 9).string(String(product['fact']));
+            ws.cell(i+4, 10).string(String(product['punkt_vidachi']));
+            allPrice += product['totalSum'];
+            allCount += product['cnt'];
+        }
+        ws.cell(products.length + 4, 7).string(`Общее колличество`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(products.length + 4, 8).string(String(allCount));
+        ws.cell(products.length + 4, 9).string(`Общая цена`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(products.length + 4, 10).string(String(allPrice));
+        wb.write('Excel.xlsx');
+        await productDTO.setReport(user['task1'], 'delivery', reportType[type]);
+        return {};
+    }
+
+    async reviewReport(user, type, dates= []){
+
+        let reportType = {
+            1: 'За сегодня',
+            2: 'Неделю',
+            3: 'Месяц',
+            4: 'Все время',
+            5: dates.length > 0 ? `c ${dates[0]} по ${dates[1]}` : ``,
+        }
+        let products = await productDTO.getReviewReport(user['task1'], type, dates);
+        let ws = wb.addWorksheet('Sheet 1');
+
+        ws.cell(1, 1, 1, 5, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
+        ws.row(1).setHeight(105);
+        ws.cell(1, 6, 1, 8, true).string('Лучший сервис по работе с маркетплейсами!\nТелефон для связи +7 (499) 133-39-37\nСайт : https://rate-this.ru/').style(description);
+        ws.cell(2, 1, 2, 8, true).string(`Отчет по выкупам за ${reportType[type]}`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 1).string(`Артикул`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 2).string(`Дата Получения`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 3).string(`Статус`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 4).string(`Коментарий`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 5).string(`БарКод`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 6).string(`Оценка`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 7).string(`Согласованно`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(3, 8).string(`Бренд`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+
+        let allCount = 0;
+        let allPrice = 0;
+        for(let i =0; i < products.length; i++){
+            let product = products[i];
+            ws.cell(i+4, 1).string(String(product['article']));
+            ws.cell(i+4, 2).string(String(product['date_buy'].toLocaleString()));
+            ws.cell(i+4, 3).string(String(product['status'] != 4 ? 'Ожидает согласование' : 'Оставлен'));
+            ws.cell(i+4, 4).string(String(product['text_otziv']));
+            ws.cell(i+4, 5).string(String(product['barcode']));
+            ws.cell(i+4, 6).string(String(product['rating_otziv']));
+            ws.cell(i+4, 7).string(product['status'] > 6 ? 'Да' : 'Нет');
+            ws.cell(i+4, 8).string(product['brand']);
+            allCount += 1;
+        }
+        ws.cell(products.length + 4, 7).string(`Общее колличество`).style(wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 13,
+                b: true
+            },
+        }));
+        ws.cell(products.length + 4, 8).string(String(allCount));
+        wb.write('Excel.xlsx');
+        await productDTO.setReport(user['task1'], 'review', reportType[type]);
+        return {};
+    }
+
+    async getReports(user, type){
+        let answer = await productDTO.getReport(user['task1'] ,type);
+        return  answer;
     }
 }
 

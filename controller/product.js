@@ -191,6 +191,57 @@ class Product {
 
     }
 
+    async buyoutReport(user, req, res, next){
+        try {
+            const  {type, dates} = req.body;
+            let answer = await productModule.buyoutReport(user, type, dates);
+
+            res.json(answer);
+
+        } catch (e) {
+            console.log(e);
+            next(e);
+        }
+    }
+    async deliveryReport(user, req, res, next){
+        try {
+            const  {type, dates} = req.body;
+            let answer = await productModule.deliveryReport(user, type, dates);
+
+            res.json(answer);
+
+        } catch (e) {
+            console.log(e);
+            next(e);
+        }
+    }
+
+    async reviewReport(user, req, res, next){
+        try {
+            const  {type, dates} = req.body;
+            let answer = await productModule.reviewReport(user, type, dates);
+
+            res.json(answer);
+
+        } catch (e) {
+            console.log(e);
+            next(e);
+        }
+    }
+
+    async getReport(user, req, res, next){
+        try {
+            const  {type} = req.body;
+            let answer = await productModule.getReports(user, type);
+
+            res.json(answer);
+
+        } catch (e) {
+            console.log(e);
+            next(e);
+        }
+    }
+
 }
 
 module.exports = new Product();

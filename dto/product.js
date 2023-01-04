@@ -6,6 +6,12 @@ const connection    = mysql.createPool({
     password : "cf}j}R75tRzM"
 }).promise();
 
+const reportTime = {
+
+    1: 24,
+    2: 168,
+    3: 1950,
+}
 
 class Product {
     async getBuyout(task1, sort, group = false){
@@ -308,6 +314,65 @@ VALUES (${i['task1']}, '${i['grafik']}', 'wb', '${i['type']}', ${i['article']}, 
         return answer[0];
     }
 
+    async getBuyoutReport(task1, type, dates){
+        let sqlScript = ``;
+        if(type < 4){
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy  > DATE_SUB(NOW(), INTERVAL ${reportTime[type]} HOUR) GROUP by article, \`group\`, price`;
+        } else {
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(2,3,4,5,6,7,8)  GROUP by article, \`group\`, price`;
+        }
+        if(dates.length > 0){
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > '${dates[0]}' AND date_buy < '${dates[1]}'  GROUP by article, \`group\`, price`;
+        }
+        let answer = await connection.query(sqlScript);
+
+        return answer[0];
+    }
+
+    async getDeliveryReport(task1, type, dates){
+        let sqlScript = ``;
+        if(type < 4){
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(3,4,5,6,7,8) AND date_buy  > DATE_SUB(NOW(), INTERVAL ${reportTime[type]} HOUR) GROUP by article, \`group\`, price`;
+        } else {
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(3,4,5,6,7,8)  GROUP by article, \`group\`, price`;
+        }
+        if(dates.length > 0){
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(3,4,5,6,7,8) AND date_buy > '${dates[0]}' AND date_buy < '${dates[1]}'  GROUP by article, \`group\`, price`;
+        }
+
+        let answer = await connection.query(sqlScript);
+        for(let i of answer[0]){
+            sqlScript = `SELECT COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND \`group\` = '${i['group']}' AND article = ${i['article']} AND price = ${i['price']} AND status IN(4,5,6,7,8)`;
+            let product = await connection.query(sqlScript);
+            i['fact'] = product[0][0]['cnt'];
+        }
+        return answer[0];
+    }
+
+    async getReviewReport(task1, type, dates){
+        let sqlScript = ``;
+        if(type < 4){
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(4,5,6,7,8) AND date_buy  > DATE_SUB(NOW(), INTERVAL ${reportTime[type]} HOUR) AND \`type\` = 'отзыв' GROUP by article, \`group\`, price`;
+        } else {
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(4,5,6,7,8)  AND \`type\` = 'отзыв'  GROUP by article, \`group\`, price`;
+        }
+
+        let answer = await connection.query(sqlScript);
+        return answer[0];
+    }
+
+    async setReport(task1, naming, type){
+        let sqlScript = `INSERT INTO reports_list (task1, naming, type, date_reports) VALUES (${task1}, "${naming}", '${type}', NOW())`
+        await connection.query(sqlScript);
+
+    }
+
+    async getReport(task1, type){
+        let sqlScript = `SELECT * FROM reports_list WHERE task1 = ${task1} AND naming = '${type}'`;
+
+        let answer = await connection.query(sqlScript);
+        return answer[0];
+    }
 }
 
 module.exports = new Product();
