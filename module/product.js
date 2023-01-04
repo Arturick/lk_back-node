@@ -755,7 +755,7 @@ class product {
         for(let i =0; i < products.length; i++){
             let product = products[i];
             ws.cell(i+4, 1).string(String(product['article']))
-            ws.cell(i+4, 2).string(String(product['date_buy'].toLocaleString()))
+            ws.cell(i+4, 2).string(String( product['date_buy'] ? product['date_buy'].toLocaleString() : 'adada'))
             ws.cell(i+4, 3).string(`оплачено`)
             ws.cell(i+4, 4).string(String(product['price']))
             ws.cell(i+4, 5).string(String(product['barcode']))
