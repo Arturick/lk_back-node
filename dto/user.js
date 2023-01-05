@@ -59,6 +59,23 @@ class User {
         let answer = await connection.query(sqlScript);
         return answer[0];
     }
+
+    async getManagerLink(link){
+        let sqlScript = `SELECT * FROM manager_access WHERE  link = '${link}'`;
+        let answer = await connection.query(sqlScript);
+        return answer[0];
+    }
+
+    async addManagerLink(userId, code, login, name, surname){
+        let sqlScript = `INSERT INTO manager_access (userId, link, userLogin, name, surname) VALUES ('${userId}', '${code}', '${login}', '${name}', '${surname}')`;
+        await connection.query(sqlScript);
+    }
+
+    async addManager(phone, name, surname, task1, pass, role, userId){
+        let sqlScript = `INSERT INTO client_data (task1, phone, login, password, u_name, u_surname, parent, role) VALUES (${task1}, '${phone}', '${phone}', '${pass}', '${name}', '${surname}', '${userId}', '${role}')`;
+
+        await connection.query(sqlScript);
+    }
 }
 
 module.exports = new User();

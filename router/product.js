@@ -15,7 +15,8 @@ let storage = multer.diskStorage({
 
 //import middleware
 const authMiddleware = require('../midleware/auth-middleware');
-
+const loginMiddleware = require('../midleware/password');
+const spamMiddleware = require('../midleware/spam');
 
 const upload = multer({ storage: storage });
 let type = upload.any();
@@ -39,15 +40,21 @@ router.post("/parse-excel", type, controller.parseExcel);
 router.post("/report-buyout", authMiddleware,  controller.getReport);
 
 router.post("/register", user.register);
-router.post("/login", user.login);
+router.post("/login", loginMiddleware, user.login);
 router.post("/refresh-password", user.resetPassword);
-router.post("/sendCode", user.sendCode);
-router.post("/getProfile", authMiddleware,  user.getProfile);
-router.post("/updateProfile", authMiddleware,  user.updateProfile);
+router.post("/send-code", spamMiddleware,  user.sendCode);
+router.post("/send-reset-code", spamMiddleware, user.sendResetCode);
+router.post("/get-profile", authMiddleware,  user.getProfile);
+router.post("/update-profile", authMiddleware,  user.updateProfile);
+router.post("/get-manager-link",  user.getManagerLink);
+router.post("/access-manager",  user.accessManager);
 
-//
+//accessManager
 router.post("/buyout-report", authMiddleware,  controller.buyoutReport);
 router.post("/delivery-report", authMiddleware, controller.deliveryReport);
 router.post("/review-report", authMiddleware, controller.reviewReport);
 router.post("/get-report", authMiddleware, controller.getReport);
+
+
+
 module.exports = router;

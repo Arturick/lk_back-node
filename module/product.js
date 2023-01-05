@@ -7,34 +7,8 @@ const ApiError = require('../exeption/error');
 var fs = require('fs');
 const errorText = require('../data/error-text');
 const xl = require('excel4node');
-const wb = new xl.Workbook();
 require('dotenv').config()
 
-let TitleStyle = wb.createStyle({
-    alignment: {
-        wrapText: true,
-    },
-
-    font: {
-        bold: true,
-        color: '46bdc6',
-        name: 'Montserrat',
-        size: 24,
-        b: true
-    },
-});
-let description = wb.createStyle({
-    alignment: {
-        wrapText: true,
-    },
-
-    font: {
-        bold: true,
-        name: 'Montserrat',
-        size: 14,
-        b: true
-    },
-});
 
 class product {
     async #getUser(id){
@@ -636,6 +610,33 @@ class product {
         }
         console.log(type);
         let products = await productDTO.getBuyoutReport(user['task1'], type, dates);
+        let wb = new xl.Workbook();
+
+        let TitleStyle = wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                color: '46bdc6',
+                name: 'Montserrat',
+                size: 24,
+                b: true
+            },
+        });
+        let description = wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 14,
+                b: true
+            },
+        });
         let ws = wb.addWorksheet('Sheet 1');
 
         ws.cell(1, 1, 1, 4, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
@@ -798,7 +799,7 @@ class product {
     }
 
     async deliveryReport(user, type, dates= []){
-
+        console.log(user, type, dates);
         let reportType = {
             1: 'За сегодня',
             2: 'Неделю',
@@ -807,12 +808,39 @@ class product {
             5: dates.length > 0 ? `c ${dates[0]} по ${dates[1]}` : ``,
         }
         let products = await productDTO.getDeliveryReport(user['task1'], type, dates);
+        let wb = new xl.Workbook();
+
+        let TitleStyle = wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                color: '46bdc6',
+                name: 'Montserrat',
+                size: 24,
+                b: true
+            },
+        });
+        let description = wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 14,
+                b: true
+            },
+        });
         let ws = wb.addWorksheet('Sheet 1');
 
         ws.cell(1, 1, 1, 5, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
         ws.row(1).setHeight(105);
         ws.cell(1, 6, 1, 10, true).string('Лучший сервис по работе с маркетплейсами!\nТелефон для связи +7 (499) 133-39-37\nСайт : https://rate-this.ru/').style(description);
-        ws.cell(2, 1, 2, 10, true).string(`Отчет по выкупам за ${reportType[type]}`).style(wb.createStyle({
+        ws.cell(2, 1, 2, 10, true).string(`Отчет по Доставкам за ${reportType[type]}`).style(wb.createStyle({
             alignment: {
                 wrapText: true,
             },
@@ -988,7 +1016,7 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 10).string(String(allPrice));
-        wb.write('Excel.xlsx');
+        wb.write(process.env.URL_REPORT);
         await productDTO.setReport(user['task1'], 'delivery', reportType[type]);
         return {};
     }
@@ -1003,12 +1031,39 @@ class product {
             5: dates.length > 0 ? `c ${dates[0]} по ${dates[1]}` : ``,
         }
         let products = await productDTO.getReviewReport(user['task1'], type, dates);
+        let wb = new xl.Workbook();
+
+        let TitleStyle = wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                color: '46bdc6',
+                name: 'Montserrat',
+                size: 24,
+                b: true
+            },
+        });
+        let description = wb.createStyle({
+            alignment: {
+                wrapText: true,
+            },
+
+            font: {
+                bold: true,
+                name: 'Montserrat',
+                size: 14,
+                b: true
+            },
+        });
         let ws = wb.addWorksheet('Sheet 1');
 
         ws.cell(1, 1, 1, 5, true).string('RATE THIS\nPROMOTION').style(TitleStyle);
         ws.row(1).setHeight(105);
         ws.cell(1, 6, 1, 8, true).string('Лучший сервис по работе с маркетплейсами!\nТелефон для связи +7 (499) 133-39-37\nСайт : https://rate-this.ru/').style(description);
-        ws.cell(2, 1, 2, 8, true).string(`Отчет по выкупам за ${reportType[type]}`).style(wb.createStyle({
+        ws.cell(2, 1, 2, 8, true).string(`Отчет по Отзывам за ${reportType[type]}`).style(wb.createStyle({
             alignment: {
                 wrapText: true,
             },
@@ -1144,7 +1199,8 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 8).string(String(allCount));
-        wb.write('Excel.xlsx');
+        wb.write(process.env.URL_REPORT);
+
         await productDTO.setReport(user['task1'], 'review', reportType[type]);
         return {};
     }

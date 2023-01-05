@@ -18,14 +18,14 @@ class User {
         if(isPhone.length > 0){
             const tokens = await tokenS.generateTokens(isPhone[0]['id']);
             await tokenS.saveToken(isPhone[0]['id'], tokens['refreshToken']);
-            return {...tokens, userId: isPhone[0]['id']};
+            return {...tokens, userId: isPhone};
         }
         let task1 = Math.floor(Math.random() * (999999 - 111111) + 111111);
         await userDB.register(phone, 'user', 'user_surname', task1);
         let user = await userDB.getByTask1(task1);
         const tokens = await tokenS.generateTokens(user[0]['id']);
         await tokenS.saveToken(user[0]['id'], tokens['refreshToken']);
-        return {...tokens, userId: user[0]['id']};
+        return {...tokens, userId: user};
     }
 
     async login(login, password){
@@ -65,23 +65,21 @@ class User {
         return {}
     }
 
-    async resetPassword(name, surname, phone, task1) {
+    async resetPassword(phone, task1, codeA) {
+        console.log(phone, task1, codeA);
         if (!phone) {
             console.log(403);
         }
-
-        let isPhone = await userDB.getUser(name, surname, phone, task1);
-        if (isPhone.length < 1) {
-            return {error: true}
+        let isCode = await codeS.checkCode(phone, codeA);
+        if(!isCode){
+            console.log(403);
+            return {error: 'code'};
         }
-        let pass = generator.generateMultiple(3, {
-                length: 6,
-                numbers: true,
-                uppercase: true
-            });
-        let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
-        await codeS.saveCode(phone, code, task1, pass);
-        await userDB.resetPassword(name, surname, phone, task1, pass);
+        let isPhone = await userDB.getUser('','', phone, task1);
+        if (isPhone.length < 1) {
+            return {error: 'not found user'};
+        }
+        await codeS.sendUsers(phone, isPhone);
 
     }
 
@@ -91,24 +89,74 @@ class User {
         }
         console.log(phone, name, surname, task1);
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
-        let isPhone = await userDB.getUser(name, surname, phone, task1);
+        let isPhone = await userDB.getUser(name, surname, phone,  -1);
         console.log(isPhone);
-        if(name && isPhone.length < 1){
-            let pass = generator.generateMultiple(3, {
+        if(isPhone.length < 1){
+
+
+            let isTask1 = await userDB.getByTask1(task1 ? task1 : -1);
+            if(isTask1.length > 0){
+                let link = generator.generateMultiple(1, {
+                    length: 10,
+                    numbers: true,
+                    uppercase: true
+                });
+                await userDB.addManagerLink(isTask1[0]['id'], link, phone, name, surname);
+                await codeS.sendManagerLink(isTask1[0]['phone'], link);
+                return {error: 'forbidden'};
+            }
+            task1 = Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
+            let pass = generator.generateMultiple(1, {
                 length: 6,
                 numbers: true,
                 uppercase: true
             });
-            task1 = task1 ? task1 : Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
             await codeS.saveCode(phone, code, task1, pass);
             await userDB.register(phone, name, surname, task1, pass);
         } else {
-
             await codeS.saveCode(phone, code, isPhone[0]['task1'], isPhone[0]['password']);
         }
 
 
         return {}
+    }
+
+    async sendResetCode(phone, name, surname, task1){
+
+        let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
+        let isPhone = await userDB.getUser(name, surname, phone, task1 ? task1 : -1);
+        console.log(isPhone);
+        if(name && isPhone.length < 1){
+            return {error: 'not found acc'};
+        } else {
+            await codeS.saveResetCode(phone, code);
+        }
+
+
+        return {}
+    }
+
+    async getManagerLinkInfo(code){
+        let answer = await userDB.getManagerLink(code);
+
+        return answer;
+    }
+
+    async accessManager(phone, access, name, surname, role, userId, task1){
+        let answer = access ? `Ваш аккаунт Успешно добавлен` : `Вам отказано в добавление Аккаунта`;
+        if(access){
+            let pass = generator.generateMultiple(1, {
+                length: 10,
+                numbers: true,
+                uppercase: true
+            });
+            let user = await userDB.getById(userId);
+            await userDB.addManager(phone, name, surname, user['task1'], pass, role, userId);
+            answer = `Ваш аккаунт Успешно добавлен\n Пороль ${pass}\n Логин: ${phone}`;
+        }
+        await codeS.sendSelfMassage(phone, answer);
+
+        return {};
     }
 }
 

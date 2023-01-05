@@ -39,8 +39,8 @@ class User {
 
     async resetPassword(req, res, next){
         try {
-            const {name, surname, phone, task1} = req.body;
-            await userModule.resetPassword(name, surname, phone, task1);
+            const {phone, task1, code} = req.body;
+            await userModule.resetPassword(phone, task1, code);
         } catch (e) {
             next(e)
         }
@@ -70,6 +70,39 @@ class User {
 
     async logout(req, res, next){
         const {token} = req.body;
+    }
+
+    async sendResetCode(req, res, next){
+        try {
+            const {phone, name, surname, task1} = req.body;
+            let answer = await userModule.sendResetCode(phone, name, surname, task1);
+            return res.json(answer);
+        } catch (e) {
+            next(e);
+        }
+
+    }
+
+    async getManagerLink(req, res, next){
+        try {
+            const {code} = req.body;
+            let answer = await userModule.getManagerLinkInfo(code);
+            return res.json(answer);
+        } catch (e) {
+            next(e);
+        }
+
+    }
+
+    async accessManager(req, res, next){
+        try {
+            const {phone, access, name, surname, role, userId, task1} = req.body;
+            let answer = await userModule.accessManager(phone, access, name, surname, role, userId, task1);
+            return res.json(answer);
+        } catch (e) {
+            next(e);
+        }
+
     }
 }
 
