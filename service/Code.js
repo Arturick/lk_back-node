@@ -7,7 +7,7 @@ class Code {
 
         await codeDB.deleteCode(phone);
         await codeDB.setCode(phone, code);
-        //await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
+        await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
     }
 
     async sendUsers(phone, users){
@@ -39,7 +39,7 @@ class Code {
 
         await codeDB.deleteCode(phone);
         await codeDB.setCode(phone, code);
-        //await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
+        await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
     }
 
     async sendSelfMassage(phone, text){
