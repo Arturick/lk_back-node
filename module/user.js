@@ -71,13 +71,25 @@ class User {
             console.log(403);
         }
         let isCode = await codeS.checkCode(phone, codeA);
-        if(!isCode){
+        console.log(isCode);
+        if(isCode.length < 1){
             console.log(403);
-            return {error: 'code'};
+            return {error: 'Не верный код'};
         }
         let isPhone = await userDB.getUser('','', phone, task1);
         if (isPhone.length < 1) {
             return {error: 'not found user'};
+        }
+        for(let i of isPhone){
+            if(!i.login || !i.password){
+                let pass = generator.generateMultiple(1, {
+                    length: 6,
+                    numbers: true,
+                    uppercase: true
+                });
+                i.login = i.phone;
+                i.password = pass;
+            }
         }
         await codeS.sendUsers(phone, isPhone);
 
@@ -126,8 +138,8 @@ class User {
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
         let isPhone = await userDB.getUser(name, surname, phone, task1 ? task1 : -1);
         console.log(isPhone);
-        if(name && isPhone.length < 1){
-            return {error: 'not found acc'};
+        if(isPhone.length < 1){
+            return {error: 'Аккаунт не обнаружен'};
         } else {
             await codeS.saveResetCode(phone, code);
         }
@@ -146,7 +158,7 @@ class User {
         let answer = access ? `Ваш аккаунт Успешно добавлен` : `Вам отказано в добавление Аккаунта`;
         if(access){
             let pass = generator.generateMultiple(1, {
-                length: 10,
+                length: 6,
                 numbers: true,
                 uppercase: true
             });

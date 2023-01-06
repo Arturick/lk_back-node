@@ -40,7 +40,8 @@ class User {
     async resetPassword(req, res, next){
         try {
             const {phone, task1, code} = req.body;
-            await userModule.resetPassword(phone, task1, code);
+            let answer = await userModule.resetPassword(phone, task1, code);
+            return res.json(answer);
         } catch (e) {
             next(e)
         }

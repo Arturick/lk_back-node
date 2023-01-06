@@ -1,6 +1,6 @@
 const spamDB = require('../dto/spam');
 
-module.exports = async function (req, res, next) {
+module.exports = async function(req, res, next) {
     try {
         let ip = req.ip.split(':')[0];
         let countReq = await spamDB.getReqByIp(ip);
@@ -8,8 +8,9 @@ module.exports = async function (req, res, next) {
         if(countReq.length > 5){
             throw Error();
         }
+        await spamDB.addReq(ip);
         next();
     } catch (e) {
-        return res.status(403).json({error: 'a lot of req in a time moment'})
+        return res.status(200).json({error: 'Слишком много попыток входа\n Попробуйте еще раз через время'})
     }
 }

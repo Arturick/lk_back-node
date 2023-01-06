@@ -10,11 +10,12 @@ module.exports =  async function (req, res, next) {
         }
         let isAuth = await userDB.login(login, password);
         if(isAuth.length < 1){
-            throw Error();
+            await passwordSpamDB.addSpam(login);
+            return res.status(200).json({error: 'wrong password', count: spamCount.length});
         }
         next();
     } catch (e) {
         await passwordSpamDB.addSpam(login);
-        return res.status(200).json({error: 'wrong password'});
+        return res.status(200).json({error: 'wrong password', count});
     }
 }

@@ -363,8 +363,8 @@ VALUES (${i['task1']}, '${i['grafik']}', 'wb', '${i['type']}', ${i['article']}, 
         return answer[0];
     }
 
-    async setReport(task1, naming, type){
-        let sqlScript = `INSERT INTO reports_list (task1, naming, type, date_reports) VALUES (${task1}, "${naming}", '${type}', NOW())`
+    async setReport(task1, naming, type, link){
+        let sqlScript = `INSERT INTO reports_list (task1, naming, type, date_reports, link) VALUES (${task1}, "${naming}", '${type}', NOW(), '${link}')`
         await connection.query(sqlScript);
 
     }

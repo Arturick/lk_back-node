@@ -8,7 +8,7 @@ var fs = require('fs');
 const errorText = require('../data/error-text');
 const xl = require('excel4node');
 require('dotenv').config()
-
+const generator = require('generate-password');
 
 class product {
     async #getUser(id){
@@ -792,8 +792,15 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 8).string(String(allPrice));
+        let code = generator.generateMultiple(5, {
+            length: 11,
+            numbers: true,
+            uppercase: true
+        });
+        let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
         wb.write(process.env.URL_REPORT);
-        await productDTO.setReport(user['task1'], 'buyout', reportType[type]);
+        wb.write(linkOld);
+        await productDTO.setReport(user['task1'], 'buyout', reportType[type], `${code}.xlsx`);
         return {};
 
     }
@@ -1016,8 +1023,10 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 10).string(String(allPrice));
+        let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
         wb.write(process.env.URL_REPORT);
-        await productDTO.setReport(user['task1'], 'delivery', reportType[type]);
+        wb.write(linkOld);
+        await productDTO.setReport(user['task1'], 'delivery', reportType[type], `${code}.xlsx`);
         return {};
     }
 
@@ -1199,9 +1208,11 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 8).string(String(allCount));
+        let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
         wb.write(process.env.URL_REPORT);
+        wb.write(linkOld);
 
-        await productDTO.setReport(user['task1'], 'review', reportType[type]);
+        await productDTO.setReport(user['task1'], 'review', reportType[type], `${code}.xlsx`);
         return {};
     }
 
