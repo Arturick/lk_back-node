@@ -1,10 +1,4 @@
-const mysql         = require('mysql2');
-const connection    = mysql.createPool({
-    host : "j45316134.myjino.ru",
-    database : "j45316134",
-    user : "j45316134",
-    password : "cf}j}R75tRzM"
-}).promise();
+const connection = require('../db-connection');
 
 const reportTime = {
 
