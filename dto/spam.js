@@ -23,6 +23,8 @@ class spam {
 
     async deleteOldReq(){
         let sqlScript = `DELETE FROM spam_log WHERE \`date\` < DATE_SUB(NOW(), INTERVAL 1 HOUR)`;
+
+        await connection.query(sqlScript);
     }
 
     async getReqByIp(ip){

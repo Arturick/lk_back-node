@@ -9,7 +9,7 @@ const connection    = mysql.createPool({
 class User {
     async register(phone, name, surname, task1, pass = false){
 
-        let sqlScript = pass ? `INSERT INTO client_data (task1, phone, login, password, u_name, u_surname) VALUES (${task1}, '${phone}', '${phone}', '${pass}', '${name}', '${surname}')` : `INSERT INTO client_data (task1, phone) VALUES (${task1}, '${phone}')`;
+        let sqlScript = pass ? `INSERT INTO client_data (task1, phone, login, password, u_name, u_surname, role) VALUES (${task1}, '${phone}', '${phone}', '${pass}', '${name}', '${surname}', 4)` : `INSERT INTO client_data (task1, phone, role) VALUES (${task1}, '${phone}', 4)`;
 
         await connection.query(sqlScript);
     }

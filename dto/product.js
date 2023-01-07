@@ -34,8 +34,8 @@ class Product {
             if(sort != 3){
                 if(answer[0].length > 0){
                     for(let i of answer[0]){
-                        i['date'] = i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
-                        i['grafik'] = i['grafik'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
+                        i['date'] = i['date']  ? i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['date'];
+                        i['grafik'] = i['grafik'] ? i['grafik'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['grafik'];
                         sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']}` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND grafik = '${i['grafik']}' `;
                         let product = await connection.query(sqlScript);
                         i['fact'] = product[0][0]['cnt'];
@@ -141,10 +141,8 @@ class Product {
         let answer = await connection.query(sqlScript);
         if(!group){
             for(let i of answer[0]){
-                let mth = new Date(i['date']).getMonth()+ 1 > 9 ? `${new Date(i['date']).getMonth()+1}` : `0${new Date(i['date']).getMonth()+1}`;
-                let dt = new Date(i['date']).getDate()+ 1 > 9 ? `${new Date(i['date']).getDate()}` : `0${new Date(i['date']).getDate()}`;
-                i['fact'] = 0;
-                i['date'] = `${new Date(i['date']).getFullYear()}-${mth}-${dt}`;
+               i['fact'] = 0;
+                i['date'] =  i['date'] ? i['date'].toLocaleString(): i['date'];
 
                 let product = await connection.query(`SELECT COUNT(*) as cnt FROM client ct WHERE task1 = ${task1} AND date_buy = '${i['date']}' AND status IN(4,5,6,7,8)`);
 
@@ -155,9 +153,7 @@ class Product {
             for(let i of answer[0]){
                 i['date'] = group;
                 if(i['date_get']){
-                    let mth = new Date(i['date_get']).getMonth()+ 1 > 9 ? `${new Date(i['date_get']).getMonth()+1}` : `0${new Date(i['date_get']).getMonth()+1}`;
-                    let dt = new Date(i['date_get']).getDate()+ 1 > 9 ? `${new Date(i['date_get']).getDate()}` : `0${new Date(i['date_get']).getDate()}`;
-                    i['date_get'] = `${new Date(i['date_get']).getFullYear()}-${mth}-${dt}`;
+                   i['date_get'] = i['date_get']  ? i['date_get'].toLocaleString() : i['date_get'];
                 }
             }
         }
@@ -183,7 +179,8 @@ class Product {
                 } else {
                     i['photos'] = [];
                 }
-                const buff = Buffer.from(i['review'], 'base64');
+                console.log(i['review']);
+                const buff = Buffer.from(i['review'] ? i['review'] : '', 'base64');
                 const str = buff.toString('utf-8');
                 i['review'] = str;
             }
@@ -344,7 +341,7 @@ VALUES (${i['task1']}, '${i['grafik']}', 'wb', '${i['type']}', ${i['article']}, 
 
         let answer = await connection.query(sqlScript);
         for(let i of answer[0]){
-            sqlScript = `SELECT COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND \`group\` = '${i['group']}' AND article = ${i['article']} AND price = ${i['price']} AND status IN(4,5,6,7,8)`;
+            sqlScript = `SELECT COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND \`group\` = '${i['group']}' AND article = ${i['article']} AND price =' ${i['price']}' AND status IN(4,5,6,7,8)`;
             let product = await connection.query(sqlScript);
             i['fact'] = product[0][0]['cnt'];
         }
@@ -358,7 +355,9 @@ VALUES (${i['task1']}, '${i['grafik']}', 'wb', '${i['type']}', ${i['article']}, 
         } else {
             sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(4,5,6,7,8)  AND \`type\` = 'отзыв'  GROUP by article, \`group\`, price`;
         }
-
+        if(dates.length > 0){
+            sqlScript = `SELECT *, COUNT(*) as cnt, SUM(price) as totalSum FROM client WHERE  task1 = ${task1} AND status IN(4,5,6,7,8) AND date_buy > '${dates[0]}' AND date_buy < '${dates[1]}'  GROUP by article, \`group\`, price`;
+        }
         let answer = await connection.query(sqlScript);
         return answer[0];
     }

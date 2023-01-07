@@ -29,7 +29,7 @@ class Code {
 
     async sendManagerLink(phone, link){
         console.log(phone);
-        let text = `Добро пожаловать в RATE-THIS! \n Мы зафиксировали попытку регистрации менеджер аккаунт по вашему уникальному ключу, вам неоходимо подтвердить это по ссылке ниже\n http://localhost:3000/user/login/access_manager?code=${link}`;
+        let text = `Добро пожаловать в RATE-THIS! \n Мы зафиксировали попытку регистрации менеджер аккаунт по вашему уникальному ключу, вам неоходимо подтвердить это по ссылке ниже\n https://app.rate-this.ru/user/login/access_manager?code=${link}`;
         await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
 
     }

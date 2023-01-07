@@ -117,7 +117,7 @@ class User {
                 await codeS.sendManagerLink(isTask1[0]['phone'], link);
                 return {error: 'forbidden'};
             }
-            task1 = Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
+            task1 = task1 ? task1 : Math.floor(Math.random() * (9999999 - 11111111) + 1111111);
             let pass = generator.generateMultiple(1, {
                 length: 6,
                 numbers: true,
