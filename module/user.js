@@ -12,7 +12,7 @@ class User {
         console.log(phone, code);
         if(!isCode){
             console.log(403);
-            return 0;
+            return {error: true};
         }
         let isPhone = await userDB.getByPhone(phone);
         if(isPhone.length > 0){

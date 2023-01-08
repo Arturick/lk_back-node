@@ -21,7 +21,7 @@ class Code {
     async checkCode(phone, code){
         console.log(phone);
         let isCode = await codeDB.checkCode(phone, code);
-        if(!isCode){
+        if(isCode.length < 1){
             return null
         }
         return isCode;
