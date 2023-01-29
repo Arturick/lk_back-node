@@ -68,7 +68,15 @@ class User {
         }
 
     }
-
+    async sendUpdateLog(user, req, res, next){
+        try {
+            const {phone, password} = req.body;
+            let answer = await userModule.sendUpdateLog(phone, password);
+            return res.json(answer);
+        } catch (e) {
+            next(e);
+        }
+    }
     async logout(req, res, next){
         const {token} = req.body;
     }

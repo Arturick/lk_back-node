@@ -3,13 +3,20 @@ const axios = require('axios');
 //http://api.smsfeedback.ru/messages/v2/send/?phone=79787025740&text=test&login=rate-this&password=KoBe6263
 class Code {
     async saveCode(phone, code, task1, password ){
-        let text = `Добро пожаловать в RATE-THIS! \n Код для входа в личный кабинет ${code} \n Логин для входа: ${phone}\n Пороль для входа: ${password} \n Ваш индивидуальный номер договора: ${task1} \nЕсли это не вы сообщите нам! https://t.me/ratethisgroup`;
+        //Kod dlya vhoda 1218. Esli eto ne vy soobshchite nam! https://t.me/ratethisgroup
+        let text = `Kod dlya vhoda ${code} \n LOGIN: ${phone}\n PASSWORD: ${password} \n ID: ${task1} \nEsli eto ne vy soobshchite nam! https://t.me/ratethisgroup https://t.me/ratethisgroup`;
 
         await codeDB.deleteCode(phone);
         await codeDB.setCode(phone, code);
         await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
     }
+    async saveUpdateCode(phone, code){
+        let text = `YOUR CODE: ${code}`;
+        await codeDB.deleteCode(phone);
+        await codeDB.setCode(phone, code);
+        await axios.get(`http://api.smsfeedback.ru/messages/v2/send/?phone=${phone}&text=${text}&login=rate-this&password=KoBe6263`);
 
+    }
     async sendUsers(phone, users){
         let text = `Добро пожаловать в RATE-THIS! \n Ниже будут представленны ваши данныке для входа`;
         for(let i of users){
@@ -35,7 +42,7 @@ class Code {
     }
 
     async saveResetCode(phone, code){
-        let text = `Добро пожаловать в RATE-THIS! \n Код для входа в личный кабинет ${code} \nЕсли это не вы сообщите нам! https://t.me/ratethisgroup`;
+        let text = `Kod:  ${code} \nEsli eto ne vy soobshchite nam! https://t.me/ratethisgroup`;
 
         await codeDB.deleteCode(phone);
         await codeDB.setCode(phone, code);

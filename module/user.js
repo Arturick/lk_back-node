@@ -95,6 +95,13 @@ class User {
 
     }
 
+    async sendUpdateLog(phone, task1){
+
+        let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
+        await codeS.saveUpdateCode(phone, code);
+        return {};
+    }
+
     async sendCode(phone, name, surname, task1){
         if(!phone){
             console.log('403');
@@ -103,7 +110,7 @@ class User {
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
         let isPhone = await userDB.getUser(name, surname, phone,  -1);
         console.log(isPhone);
-        if(isPhone.length < 1){
+        if(isPhone.length < 1 || name){
 
 
             let isTask1 = await userDB.getByTask1(task1 ? task1 : -1);
@@ -136,15 +143,13 @@ class User {
     async sendResetCode(phone, name, surname, task1){
 
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
-        let isPhone = await userDB.getUser(name, surname, phone, task1 ? task1 : -1);
+        let isPhone = await userDB.getUser(name, surname, phone,  -1);
         console.log(isPhone);
         if(isPhone.length < 1){
             return {error: 'Аккаунт не обнаружен'};
         } else {
             await codeS.saveResetCode(phone, code);
         }
-
-
         return {}
     }
 

@@ -345,6 +345,17 @@ class product {
         if(!items || !dates){
             throw ApiError.BadRequest(errorText.noData);
         }
+        console.log(dates);
+        if(new Date(dates[0]).getTime() > new Date(dates[1]).getTime()){
+            let lcDate = dates[0];
+            dates[0] = dates[1];
+            dates[1] = lcDate;
+        }
+        dates = dates.sort((a,b) => {
+            console.log(new Date(a).getTime(),new Date(b).getTime());
+            return new Date(a).getTime() < new Date(b).getTime();
+        })
+
         let buyCounts = {};
         let countDate = 0;
         if(dates.length < 2){
