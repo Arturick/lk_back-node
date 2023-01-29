@@ -26,7 +26,7 @@ router.post("/find-by-article", authMiddleware,   controller.findByArticle);
 router.get("/get-report", authMiddleware,  controller.findByArticle);
 router.post("/find-by-articles", authMiddleware,    controller.findByArticles);
 router.post("/find-position", authMiddleware,  controller.findPosition);
-router.post("/buyout", authMiddleware,  user.getBuyout);
+router.post("/buyout", authMiddleware,  controller.getBuyout);
 router.post("/draft", authMiddleware,  controller.getDraft);
 router.post("/update-draft", authMiddleware,   controller.updateDraft);
 router.post("/reviews", authMiddleware,  controller.getReview);
