@@ -61,8 +61,8 @@ class User {
         if(!profile){
             console.log(403);
         }
-        await userDB.updateProfile(profile);
-        return {}
+            await userDB.updateProfile(profile);
+            return {}
     }
 
     async resetPassword(phone, task1, codeA) {
@@ -95,13 +95,23 @@ class User {
 
     }
 
-    async sendUpdateLog(phone, task1){
+    async sendUpdateLog(phone){
 
         let code = Math.floor(Math.random() * (9999 - 1111) + 1111);
         await codeS.saveUpdateCode(phone, code);
         return {};
     }
 
+    async updateLog(user, code){
+        let isCode = await codeS.checkCode(user.phone, code);
+        console.log(isCode);
+        if(isCode.length < 1){
+            console.log(403);
+            return {error: 'Не верный код'};
+        }
+        await userDB.updateProfile(user);
+        return {}
+    }
     async sendCode(phone, name, surname, task1){
         if(!phone){
             console.log('403');

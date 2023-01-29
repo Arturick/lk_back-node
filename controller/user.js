@@ -70,8 +70,17 @@ class User {
     }
     async sendUpdateLog(user, req, res, next){
         try {
-            const {phone, password} = req.body;
-            let answer = await userModule.sendUpdateLog(phone, password);
+            const {phone} = req.body;
+            let answer = await userModule.sendUpdateLog(phone);
+            return res.json(answer);
+        } catch (e) {
+            next(e);
+        }
+    }
+    async updateLog(user, req, res, next){
+        try {
+            const {userNew, code} = req.body;
+            let answer = await userModule.sendUpdateLog(userNew, code);
             return res.json(answer);
         } catch (e) {
             next(e);

@@ -31,6 +31,7 @@ router.post("/draft", authMiddleware,  controller.getDraft);
 router.post("/update-draft", authMiddleware,   controller.updateDraft);
 router.post("/reviews", authMiddleware,  controller.getReview);
 router.post("/send-update-log", authMiddleware,  user.sendUpdateLog);
+router.post("/update-log", authMiddleware,  user.updateLog);
 router.post("/delivery", authMiddleware, controller.getDelivery);
 router.post("/delete", authMiddleware, controller.getDelete);
 router.post("/save-draft", authMiddleware,   controller.draftSave);
