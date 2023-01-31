@@ -78,7 +78,21 @@ class ProductService {
         if(product2['data']['products'].length < 1){
             return null
         }
-        productList['image'] = `https://images.wbstatic.net/c246x328/new/${Math.floor(+article/10000)}0000/${String(article)}-1.jpg`
+        productList['image'] = false
+        for(let i = 0; i < 10; i++){
+            if(productList['image']){
+                break;
+            }
+            await axios.get(`https://basket-0${i}.wb.ru/vol${Math.floor(article / 100000)}/part${Math.floor(article / 1000)}/${article}/images/tm/1.jpg`)
+                .then(function (res) {
+                    productList['image'] = `https://basket-0${i}.wb.ru/vol${Math.floor(article / 100000)}/part${Math.floor(article / 1000)}/${article}/images/tm/1.jpg`;
+                    console.log(i);
+                })
+                .catch(function (error) {
+                    console.log('dwq');
+                })
+        }
+
         productList['brand'] = product['selling']['brand_name'];
         productList['article'] = String(article);
         console.log(product2['data']['products'][0]['sizes']);
