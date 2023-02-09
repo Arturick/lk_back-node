@@ -242,6 +242,7 @@ class Product {
         }
     }
 
+
 }
 
 module.exports = new Product();

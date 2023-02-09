@@ -17,23 +17,21 @@ class ProductService {
     }
 
     async findProductByPos(article, query){
-        if(!article || !query){
-            return null;
-        }
+
         let position = -1,
-            isPosition = false,
-            needProduct = await this.findProductByArt(article);
-        console.log(needProduct);
+            isPosition = false;
+
         for(let i = 1; i<65; i++){
             await axios.get(`https://search.wb.ru/exactmatch/ru/common/v4/search?appType=1&couponsGeo=12,3,18,15,21&curr=rub&dest=-1029256,-102269,-2162196,-1257786&emp=0&lang=ru&locale=ru&page=${i}&pricemarginCoeff=1.0&query=${query}&reg=0&regions=68,64,83,4,38,80,33,70,82,86,75,30,69,22,66,31,40,1,48,71&resultset=catalog&sort=popular&spp=0&suppressSpellcheck=false`)
                 .then(answer => {
-                    if(!answer['data']['data']){return}
-                    answer['data']['data']['products'].map(product => {
 
-                        if(product['id'] == article || (needProduct['brand'] == product['brand'] && needProduct['naming'] == product['name'])){
+                    if(!answer['data'] || !answer['data']['data'] ){return}
+                    answer['data']['data']['products'].map((product, index) => {
 
+                        if(product['id'] == article){
+                            console.log(i*1000)
                             isPosition = true;
-                            position = i * 100;
+                            position = (i * 100) + (index);
                         }
                     })
                 })
@@ -44,8 +42,8 @@ class ProductService {
                 break;
             }
         }
+        return position;
 
-        return  {pos: position, art: article, 'query': query}
     }
 
     async findProductByArt(article){
@@ -79,20 +77,35 @@ class ProductService {
             return null
         }
         productList['image'] = false
-        for(let i = 0; i < 10; i++){
-            if(productList['image']){
-                break;
-            }
-            await axios.get(`https://basket-0${i}.wb.ru/vol${Math.floor(article / 100000)}/part${Math.floor(article / 1000)}/${article}/images/tm/1.jpg`)
-                .then(function (res) {
-                    productList['image'] = `https://basket-0${i}.wb.ru/vol${Math.floor(article / 100000)}/part${Math.floor(article / 1000)}/${article}/images/tm/1.jpg`;
-                    console.log(i);
-                })
-                .catch(function (error) {
-                    console.log('dwq');
-                })
+        let e=~~(parseInt(article,10)/1e5)
+        let link = ''
+        if(e>=0&&e<=143){
+            link = 'https://basket-01.wb.ru';
+        } else if(e>=144&&e<=287){
+            link = 'https://basket-02.wb.ru';
+        } else if(e>=288&&e<=431){
+            link = 'https://basket-03.wb.ru';
+        } else if(e>=432&&e<=719){
+            link = 'https://basket-04.wb.ru';
+        } else if(e>=720&&e<=1007){
+            link = 'https://basket-05.wb.ru';
+        } else if(e>=1008&&e<=1061){
+            link = 'https://basket-06.wb.ru';
+        } else if(e>=1062&&e<=1115){
+            link = 'https://basket-07.wb.ru';
+        } else if(e>=1116&&e<=1169){
+            link = 'https://basket-08.wb.ru';
+        } else if(e>=1170&&e<=1313){
+            link = 'https://basket-09.wb.ru';
+        } else if(e>=1314&&e<=1601){
+            link = 'https://basket-10.wb.ru';
+        }  else if(e>=1602&&e<=1889){
+            link = 'https://basket-11.wb.ru';
+        }  else if(e>1889){
+            link = 'https://basket-12.wb.ru';
         }
 
+        productList['image'] =  `${link}/vol${Math.floor(article / 100000)}/part${Math.floor(article / 1000)}/${article}/images/tm/1.jpg`;
         productList['brand'] = product['selling']['brand_name'];
         productList['article'] = String(article);
         console.log(product2['data']['products'][0]['sizes']);
