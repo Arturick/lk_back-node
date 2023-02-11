@@ -41,6 +41,11 @@ class User {
         await connection.query(sqlScript);
 
     }
+    async updateProfileLog(profile){
+        let sqlScript = `UPDATE client_data SET password = '${profile['password']}', u_name = '${profile['u_name']}', login = '${profile['login']}' WHERE id = ${profile['id']}`;
+        await connection.query(sqlScript);
+
+    }
 
     async resetPassword(name, surname, phone, task1, pass){
         let sqlScript = `UPDATE client_data SET password = '${pass}' WHERE u_name = '${name}' AND u_surname = '${surname}' AND phone = '${phone}' AND task1 = ${task1}`;

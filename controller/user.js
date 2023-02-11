@@ -80,7 +80,7 @@ class User {
     async updateLog(user, req, res, next){
         try {
             const {userNew, code} = req.body;
-            let answer = await userModule.sendUpdateLog(userNew, code);
+            let answer = await userModule.updateLog(userNew, code);
             return res.json(answer);
         } catch (e) {
             next(e);

@@ -19,7 +19,7 @@ class Product {
                 sqlScript = group ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = '${group}' AND task1 = ${task1} GROUP by grafik` : `SELECT *, COUNT(*) as plan, date_add as date, status FROM client ct WHERE  task1 = ${task1} GROUP by ct.group`;
                 break;
             case 3:
-                sqlScript = group ? `SELECT *,  img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = '${group}' AND task1 = ${task1}` : `SELECT *, COUNT(*) as plan, status FROM client ct WHERE  task1 = ${task1} GROUP by date_add`;
+                sqlScript = group ? `SELECT *,  img_wb as image, article as art, grafik as date FROM client ct WHERE ct.group = '${group}' AND task1 = ${task1}` : `SELECT *, COUNT(*) as plan, status FROM client ct WHERE  task1 = ${task1} GROUP by ct.group`;
                 break;
         }
         let answer = await connection.query(sqlScript);

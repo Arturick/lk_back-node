@@ -109,7 +109,7 @@ class User {
             console.log(403);
             return {error: 'Не верный код'};
         }
-        await userDB.updateProfile(user);
+        await userDB.updateProfileLog(user);
         return {}
     }
     async sendCode(phone, name, surname, task1){
