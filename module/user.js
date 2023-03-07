@@ -2,7 +2,12 @@ const userDB = require('../dto/user');
 const codeS = require('../service/Code')
 const tokenS = require('../service/Token');
 const generator = require('generate-password');
-
+roles = {
+    'Пользователь' : 1,
+    'Админ' : 2,
+    'Менеджер' : 3,
+    'Владелец' : 4,
+}
 class User {
     async register(phone, code){
         if(!phone || !code){
@@ -184,6 +189,22 @@ class User {
         await codeS.sendSelfMassage(phone, answer);
 
         return {};
+    }
+
+    async addManager(newUser, user){
+        newUser.role = roles[newUser.role];
+        if(newUser.role == 4){
+            await userDB.becameManager(user.id);
+        }
+        await userDB.addManager(newUser.phone, newUser.name, newUser.surname, user.task1, user.password, newUser.role, user.id);
+    }
+
+    async deleteManager(user_id){
+        await userDB.deleteUser(user_id);
+    }
+
+    async getManager(user){
+        return userDB.getManagers(user.id);
     }
 }
 

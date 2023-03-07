@@ -4,9 +4,12 @@ class Position {
     async addKey(user, req, res, next){
         try {
             const {key, article} = req.body;
-            let answer = await service.addKey(user, key, article);
+            service.addKey(user, key, article)
+                .then(answer => {
+                    return res.json(answer);
+                });
 
-            return res.json(answer);
+
         } catch (e){
             next(e);
         }

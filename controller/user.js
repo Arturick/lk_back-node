@@ -122,6 +122,36 @@ class User {
         }
 
     }
+
+    async addManger(user, req, res, next){
+        try {
+            const {item} = req.body;
+            let answer = await userModule.addManager(item, user);
+            return res.json(answer);
+        } catch (e){
+            next(e);
+        }
+    }
+
+    async deleteManager(user, req, res, next){
+        try {
+            const {item} = req.body;
+            let answer = await userModule.deleteManager(item);
+            return res.json(answer);
+        } catch (e){
+            console.log(e);
+            next(e);
+        }
+    }
+
+    async getManagers(user, req, res, next){
+        try {
+            let answer = await userModule.getManager(user);
+            return res.json(answer);
+        } catch (e){
+            next(e);
+        }
+    }
 }
 
 module.exports = new User();

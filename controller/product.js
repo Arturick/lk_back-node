@@ -2,226 +2,244 @@ const answer = require("../service/Answer");
 const productModule = require("../module/product");
 const userDB = require('../dto/user');
 class Product {
-    async findByArticle(user ,req, res, next){
-
+    findByArticle(user ,req, res, next){
         try {
             const {article} = req.body;
-            let response = await productModule.findByArticle(article);
+            productModule.findByArticle(article)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
 
-            return res.json(answer.product(response));
+
         } catch  (e) {
             next(e);
         }
     }
 
-    async findPosition(user ,req, res, next){
+    findPosition(user ,req, res, next){
 
         try {
             const {items} = req.body;
-            let response = await productModule.findPosition(items);
-            return res.json(answer.product(response));
+            productModule.findPosition(items)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
+            
         } catch  (e) {
             next(e);
         }
     }
 
-    async sortBuyByDate(user ,req, res, next){
+    sortBuyByDate(user ,req, res, next){
         try {
             const {items, date} = req.body;
-            let response = await productModule.sortBuyByDate(items, date);
-            return res.json(answer.product(response));
+            productModule.sortBuyByDate(items, date)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
+
         } catch  (e) {
             next(e);
         }
     }
 
-    async findByArticles(user ,req, res, next){
+    findByArticles(user ,req, res, next){
 
         try {
             const {articles} = req.body;
-            let response = await productModule.findByArticles(articles);
-            return res.json(answer.product(response));
+            productModule.findByArticles(articles)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
+
         } catch  (e) {
             next(e);
         }
     }
 
-    async getBuyout(user ,req, res, next){
+      getBuyout(user ,req, res, next){
 
         try {
             const {sort, group} = req.body;
 
-            let response = await productModule.getBuyout(user, sort, group);
-            return res.json(answer.product(response));
+             productModule.getBuyout(user, sort, group)
+                 .then(response => {
+                     return res.json(answer.product(response));
+                 });
+
         } catch  (e) {
             next(e);
         }
     }
 
-    async getDraft(user ,req, res, next){
+      getDraft(user ,req, res, next){
         try {
             const {group} = req.body;
-            let response = await productModule.getDraft(user, group);
+             productModule.getDraft(user, group);
             return res.json(answer.product(response));
         } catch  (e) {
             next(e);
         }
     }
 
-    async getDelete(user ,req, res, next){
+      getDelete(user ,req, res, next){
 
         try {
             const {id} = req.body;
+             productModule.getDelete(user, id)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
 
-            let response = await productModule.getDelete(user, id);
-            return res.json(answer.product(response));
         } catch  (e) {
             next(e);
         }
     }
 
-    async setReview(user ,req, res, next){
+      setReview(user ,req, res, next){
         try {
             const {item} = req.body;
 
-            let response = await productModule.saveReview(user, item);
+             productModule.saveReview(user, item);
             return res.json(answer.product(response));
         } catch  (e) {
             next(e);
         }
     }
 
-    async  getDelivery(user ,req, res, next){
+       getDelivery(user ,req, res, next){
         try {
             const {date_get} = req.body;
 
-            let response = await productModule.getDelivery(user, date_get);
-            return res.json(answer.product(response));
+            productModule.getDelivery(user, date_get)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
         } catch  (e) {
             next(e);
         }
     }
 
-    async  parseExcel(req, res, next){
+       parseExcel(req, res, next){
         try {
             console.log(21);
-            let response = await productModule.parseExcel(/*req.files*/);
+             productModule.parseExcel(/*req.files*/);
             return res.json(answer.product(response));
         } catch  (e) {
             next(e);
         }
     }
 
-    async getReview(user ,req, res, next){
+      getReview(user ,req, res, next){
 
         try {
             const {article} = req.body;
 
-            let response = await productModule.getReview(user, article);
-            return res.json(answer.product(response));
+            productModule.getReview(user, article)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
         } catch  (e) {
             next(e);
         }
     }
 
-    async getProductByApi(user ,req, res, next){
+      getProductByApi(user ,req, res, next){
 
         try {
-            let response = await productModule.getProductByApi(user);
+             productModule.getProductByApi(user);
             return res.json(answer.product(response));
         } catch  (e) {
             next(e);
         }
     }
 
-    async save(user ,req, res, next){
+      save(user ,req, res, next){
 
         try {
             const {items} = req.body;
 
-            let response = await productModule.save(user, items);
-            return res.json(answer.product(response));
+            productModule.save(user, items)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
         } catch  (e) {
             next(e);
         }
     }
 
-    async updateDraft(user, req, res, next){
+      updateDraft(user, req, res, next){
         try {
             const {group, items} = req.body;
-            let response = await productModule.updateDraft(user, group, items);
+             productModule.updateDraft(user, group, items);
             return res.json(answer.product(response));
         } catch  (e) {
             next(e);
         }
     }
 
-    async draftSave(user, req, res, next){
+      draftSave(user, req, res, next){
 
         try {
             const {items} = req.body;
 
-            let response = await productModule.saveDraft(user, items);
-            return res.json(answer.product(response));
+            productModule.saveDraft(user, items)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
         } catch  (e) {
             next(e);
         }
     }
 
-    async getGraph(user, req, res, next){
+      getGraph(user, req, res, next){
 
         try {
 
-            let response = await productModule.getGraph(user);
+             productModule.getGraph(user);
             return res.json(response);
         } catch  (e) {
             next(e);
         }
     }
 
-    async getReport(user, req, res, next){
+      getReport(user, req, res, next){
         try {
             const {type, dates} = req.body;
 
-            let response = await productModule.reportBuyout(user,  dates);
-            return res.json(response);
+            productModule.reportBuyout(user,  dates)
+                .then(response => {
+                    return res.json(answer.product(response));
+                });
         } catch  (e) {
             next(e);
         }
 
     }
 
-    async buyoutReport(user, req, res, next){
+      buyoutReport(user, req, res, next){
         try {
             const  {type, dates} = req.body;
-            let answer = await productModule.buyoutReport(user, type, dates);
+            productModule.buyoutReport(user, type, dates)
+                .then(response => {
+                    return res.json(response);
+                });
 
-            res.json(answer);
 
         } catch (e) {
             console.log(e);
             next(e);
         }
     }
-    async deliveryReport(user, req, res, next){
+      deliveryReport(user, req, res, next){
         try {
             const  {type, dates} = req.body;
-            let answer = await productModule.deliveryReport(user, type, dates);
+            productModule.deliveryReport(user, type, dates)
+                .then(response => {
+                return res.json(response);
+            });
 
-            res.json(answer);
 
-        } catch (e) {
-            console.log(e);
-            next(e);
-        }
-    }
-
-    async reviewReport(user, req, res, next){
-        try {
-            const  {type, dates} = req.body;
-            let answer = await productModule.reviewReport(user, type, dates);
-
-            res.json(answer);
 
         } catch (e) {
             console.log(e);
@@ -229,12 +247,28 @@ class Product {
         }
     }
 
-    async getReport(user, req, res, next){
+      reviewReport(user, req, res, next){
+        try {
+            const  {type, dates} = req.body;
+            productModule.reviewReport(user, type, dates)
+                .then(response => {
+                    return res.json(response);
+                });
+
+
+        } catch (e) {
+            console.log(e);
+            next(e);
+        }
+    }
+
+      getReport(user, req, res, next){
         try {
             const  {type} = req.body;
-            let answer = await productModule.getReports(user, type);
-
-            res.json(answer);
+            productModule.getReports(user, type)
+                .then(response => {
+                    return res.json(response);
+                });
 
         } catch (e) {
             console.log(e);

@@ -1,32 +1,39 @@
 const userDB = require('../dto/user');
 
 class Role {
-    async secondRole(user, req, res, next){
+    async secondRole(req, res, next){
         try {
+            const {userId} = req.body;
+            let user = await userDB.getById(userId);
             if(user.role < 2){
-                throw Error();
+                return res.status(403).json({error: 'role'});
             }
-            next();
+            next(user);
         } catch (e) {
             return res.status(403).json({error: 'role'});
         }
     }
-    async thirdRole(user, req, res, next){
+    async thirdRole(req, res, next){
         try {
+            const {userId} = req.body;
+            let user = await userDB.getById(userId);
+            console.log(user);
             if(user.role < 3){
-                throw Error();
+                return res.status(403).json({error: 'role'});
             }
-            next();
+            next(user);
         } catch (e) {
             return res.status(403).json({error: 'role'});
         }
     }
-    async fourthRole(user, req, res, next){
+    async fourthRole(req, res, next){
         try {
+            const {userId} = req.body;
+            let user = await userDB.getById(userId);
             if(user.role < 4){
-                throw Error();
+                return res.status(403).json({error: 'role'});
             }
-            next();
+            next(user);
         } catch (e) {
             return res.status(403).json({error: 'role'});
         }

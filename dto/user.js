@@ -9,7 +9,7 @@ class User {
     }
 
     async login(login, password){
-        let sqlScript = `SELECT * FROM client_data WHERE login = ${login} AND password = '${password}'`;
+        let sqlScript = `SELECT * FROM client_data WHERE login = '${login}' AND password = '${password}'`;
 
         let product = await connection.query(sqlScript);
         return product[0];
@@ -74,6 +74,22 @@ class User {
         let sqlScript = `INSERT INTO client_data (task1, phone, login, password, u_name, u_surname, parent, role) VALUES (${task1}, '${phone}', '${phone}', '${pass}', '${name}', '${surname}', '${userId}', '${role}')`;
 
         await connection.query(sqlScript);
+    }
+
+    async deleteUser(id){
+        let sqlScript = `DELETE FROM client_data WHERE id = ${id}`;
+        await connection.query(sqlScript);
+    }
+
+    async becameManager(user_id){
+        let sqlScript = `UPDATE client_data SET role = 3 WHERE id = ${user_id}`;
+        await connection.query(sqlScript);
+    }
+
+    async getManagers(userId){
+        let sqlScript = `SELECT * FROM client_data WHERE  parent = ${userId}`;
+        let answer = await connection.query(sqlScript);
+        return answer[0];
     }
 }
 
