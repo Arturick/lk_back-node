@@ -134,22 +134,23 @@ class product {
         let token = user['wb_api_key'];
 
         let products = await productService.getProductsByApi(token);
+        if(products){
+            for(let i of products){
+                console.log(i['nmId'])
 
-        for(let i of products){
-            console.log(i['nmId'])
+                i['image'] = `https://images.wbstatic.net/c246x328/new/${Math.floor(+i['nmId']/10000)}0000/${String(+i['nmId'])}-1.jpg`
 
-            i['image'] = `https://images.wbstatic.net/c246x328/new/${Math.floor(+i['nmId']/10000)}0000/${String(+i['nmId'])}-1.jpg`
-
-            let sizes = [];
-            if(i['sizes']){
-                for(let j of i['sizes']){
-                    sizes.push(i['origName']);
+                let sizes = [];
+                if(i['sizes']){
+                    for(let j of i['sizes']){
+                        sizes.push(i['origName']);
+                    }
                 }
-            }
-            i['sizes'] = sizes ;
-            i['art'] = i['nmId'];
-            i['barcode'] = i['barcode'];
-        };
+                i['sizes'] = sizes ;
+                i['art'] = i['nmId'];
+                i['barcode'] = i['barcode'];
+            };
+        }
         let header = await productService.getHeader('apiProduct', 1);
 
         return {headers: header, products: products}
