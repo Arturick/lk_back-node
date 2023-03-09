@@ -20,10 +20,9 @@ app.use(errorMiddleware);
 
 
 const start = async () => {
-
+    //await prMd.updateDB();
     try {
         let task = cron.schedule('*/1 * * * *', async () => {
-            //await prMd.updateDB();
             console.log('Running a job at 01:00 at America/Sao_Paulo timezone');
         }, {
             scheduled: true,

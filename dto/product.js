@@ -227,6 +227,11 @@ VALUES ('черновик', 'wb', '${i['type']}', '${i['article']}', '${i['size'
             let dt = date.getDate()  < 10 ? `0${date.getDate()}`: date.getDate();
             let mth = date.getMonth() + 1< 10 ? `0${date.getMonth() + 1}`: date.getMonth() + 1;
             date = `${date.getFullYear()}-${mth}-${dt}`;
+            i['date_add'] = new Date(i['date_add']);
+            let dt2 = i['date_add'].getDate()  < 10 ? `0${i['date_add'].getDate()}`: i['date_add'].getDate();
+            let mth2 = i['date_add'].getMonth() + 1< 10 ? `0${i['date_add'].getMonth() + 1}`: i['date_add'].getMonth() + 1;
+            i['date_add'] = `${i['date_add'].getFullYear()}-${mth2}-${dt2}`;
+
             sqlScript  =  `INSERT INTO client_temp (status, grafik, mp, type, article, size, search_key, barcode, kto_zabirat, brand, naming, task1, date_add, \`group\`, img_wb, price_wb, sex)
 VALUES ('Заявка', "${date}", 'wb', '${i['type']}', '${i['article']}', '${i['size']}', '${i['search_key']}', '${i['barcode']}', 'RATE-THIS', '${i['brand']}', '${i['naming']}', '${task1}', '${i['date_add']}', ${group}, '${i['image']}', ${i['price']}, '${i['gender']}')`;
             console.log(sqlScript);
@@ -255,14 +260,14 @@ VALUES ('черновик', 'wb', '${i['type']}', '${i['article']}', '${i['size'
         let mth = date.getMonth() + 1< 10 ? `0${date.getMonth() + 1}`: date.getMonth() + 1;
         date = `${date.getFullYear()}-${mth}-${dt}`;
         console.log(date);
-        let sqlScript = `SELECT * FROM client_temp WHERE article = '545482539'`;
+        let sqlScript = `SELECT * FROM client_temp WHERE grafik = '${date}'`;
         let answer = await connection.query(sqlScript);
         console.log(answer[0].length);
 
         for(let i of answer[0]){
             console.log(i);
             dt = i['date_add'].getDate()  < 10 ? `0${i['date_add'].getDate()}`: i['date_add'].getDate();
-            mth = i['date_add'].getMonth() + 1< 10 ? `0${i['date_add'].getMonth() + 1}`: i['date_add'].getMonth() + 1;
+            mth = i['date_add'].getMonth() + 1 < 10 ? `0${i['date_add'].getMonth() + 1}`: i['date_add'].getMonth() + 1;
             i['date_add'] = `${i['date_add'].getFullYear()}-${mth}-${dt}`;
             sqlScript = `INSERT INTO client (task1, grafik, mp, type, article, size, search_key, barcode, sex, kto_zabirat, brand, naming, price_wb, date_add, \`group\`, img_wb) 
 VALUES (${i['task1']}, '${i['grafik']}', 'wb', '${i['type']}', ${i['article']}, ${i['size']}, '${i['search_key']}', '${i['barcode']}', '${i['sex']}', '${i['kto_zabirat']}', '${i['brand']}', '${i['naming']}', ${i['price_wb']}, NOW(), '${i['group']}', '${i['img_wb']}')`;
