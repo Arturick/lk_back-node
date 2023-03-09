@@ -98,6 +98,9 @@ class Product {
                 answer = await connection.query(`SELECT *, COUNT(*) as plan, date_add as date, status FROM client_temp ct WHERE  task1 = ${task1} GROUP by ct.group`);
 
                 for(let i of answer[0]){
+                    if(i['group'] in already){
+                        return;
+                    }
                     console.log(i['group']);
                     if(already.indexOf(i['article']) != -1){continue;}
                     i['fact'] = 0;
