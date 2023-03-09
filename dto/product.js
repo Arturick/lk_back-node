@@ -82,9 +82,9 @@ class Product {
             } else {
                 console.log(answer[0]);
                 for(let i of answer[0]){
-
-                        let product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8)`);
+                        if(already.indexOf(i['group']) != -1){continue}
                         already.push(i['group']);
+                        let product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8)`);
                         i['fact'] = product[0][0]['cnt'];
                         console.log(i);
                         if(!i['date_add']){
@@ -98,7 +98,8 @@ class Product {
                 answer = await connection.query(`SELECT *, COUNT(*) as plan, date_add as date, status FROM client_temp ct WHERE  task1 = ${task1} GROUP by ct.group`);
 
                 for(let i of answer[0]){
-                    if(i['group'] in already){
+                    if(already.indexOf(i['group']) != -1){
+                        continue;
                         return;
                     }
                     console.log(i['group']);
