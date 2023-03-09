@@ -80,7 +80,7 @@ class Product {
 
 
             } else {
-                //console.log(task1, sort, group);
+                console.log(answer[0]);
                 for(let i of answer[0]){
 
                         let product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8)`);
