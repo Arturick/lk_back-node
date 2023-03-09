@@ -140,8 +140,10 @@ class Product {
         if(!group){
             for(let i of answer[0]){
                i['fact'] = 0;
-                i['date'] =  i['date'] ? i['date'].toLocaleString(): i['date'];
-
+                let date = i['date'];
+                let dt = date.getDate()  < 10 ? `0${date.getDate()}`: date.getDate();
+                let mth = date.getMonth() + 1< 10 ? `0${date.getMonth() + 1}`: date.getMonth() + 1;
+                i['date'] = `${date.getFullYear()}-${mth}-${dt}`;
                 let product = await connection.query(`SELECT COUNT(*) as cnt FROM client ct WHERE task1 = ${task1} AND date_buy = '${i['date']}' AND status IN(4,5,6,7,8)`);
 
                 i['fact'] = product[0][0]['cnt'];
