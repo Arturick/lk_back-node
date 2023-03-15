@@ -29,7 +29,12 @@ class Product {
                 if(answer[0].length > 0){
                     for(let i of answer[0]){
                         i['date'] = i['date']  ? i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['date'];
-                        i['grafik'] = i['grafik'] ? i['grafik'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['grafik'];
+                        //i['grafik'] = i['grafik'] ? i['grafik'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['grafik'];
+                        let date = new Date(i['grafik']);
+                        let dt = date.getDate()  < 10 ? `0${date.getDate()}`: date.getDate();
+                        let mth = date.getMonth() + 1< 10 ? `0${date.getMonth() + 1}`: date.getMonth() + 1;
+                        i['grafik'] = `${date.getFullYear()}-${mth}-${dt}`;
+
                         sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']}` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND grafik = '${i['grafik']}' `;
                         let product = await connection.query(sqlScript);
                         i['fact'] = product[0][0]['cnt'];
@@ -39,7 +44,7 @@ class Product {
                         i['ids'] = [];
                         sqlScript = sort == 1 ? `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}` : `SELECT id as ids FROM client t WHERE t.group = '${i['group']}' AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
-                        console.log(sqlScript);
+                        console.log(i['grafik']);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
                         }
