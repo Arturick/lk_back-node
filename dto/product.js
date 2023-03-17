@@ -27,6 +27,14 @@ class Product {
         if(!group || sort != 3){
             if(sort != 3){
                 if(answer[0].length > 0){
+                    if(sort == 2){
+                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article, \`size\`` : `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1} GROUP by grafik`;
+                        let answerTemp = await connection.query(sqlScript);
+                        for(let i of answerTemp[0]){
+                            answer[0].push(i);
+                        }
+                    }
+
                     for(let i of answer[0]){
                         i['date'] = i['date']  ? i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['date'];
                         //i['grafik'] = i['grafik'] ? i['grafik'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['grafik'];
@@ -55,6 +63,7 @@ class Product {
                         }
                         products.push(i);
                     }
+
                 } else {
                     sqlScript = sort == 1 ? `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1}  GROUP by article, \`size\`` : `SELECT *, COUNT(*) as plan, img_wb as image, article as art, grafik as date FROM client_temp ct WHERE ct.group = ${group} AND task1 = ${task1} GROUP by grafik`;
                     answer = await connection.query(sqlScript);
