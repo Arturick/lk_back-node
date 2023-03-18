@@ -100,8 +100,10 @@ class Product {
         try {
             const {item} = req.body;
 
-             productModule.saveReview(user, item);
-            return res.json(answer.product(response));
+             productModule.saveReview(user, item).then(response => {
+                 return res.json(answer.product(response));
+             });
+
         } catch  (e) {
             next(e);
         }
@@ -196,8 +198,11 @@ class Product {
 
         try {
 
-             productModule.getGraph(user);
-            return res.json(response);
+             productModule.getGraph(user)
+                 .then(response => {
+                     return res.json(response);
+                 });
+
         } catch  (e) {
             next(e);
         }

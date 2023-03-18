@@ -193,6 +193,7 @@ class Product {
                 } else {
                     i['photos'] = [];
                 }
+                i['review_editable'] = false
                 console.log(i['review']);
                 const buff = Buffer.from(i['review'] ? i['review'] : '', 'base64');
                 const str = buff.toString('utf-8');
