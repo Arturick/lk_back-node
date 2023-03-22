@@ -784,7 +784,7 @@ class product {
             uppercase: true
         });
         let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
-        wb.write(procesыs.env.URL_REPORT);
+        wb.write(process.env.URL_REPORT);
         wb.write(linkOld);
         await productDTO.setReport(user['task1'], 'buyout', reportType[type], `${code}.xlsx`);
         return {};
