@@ -320,13 +320,13 @@ class product {
             totalSum = 0;
         let dates = [];
         console.log(seller2)
-        for(let i of seller1){
+        for(let i of seller2){
             cnt+= +i['cnt'];
             totalSum = +i['cnt'] * i['price'];
             last[i['date_buy'].getDay()] = i['cnt'];
             //date_buy
         }
-        for(let i of seller2){
+        for(let i of seller1){
             cnt+= +i['cnt'];
             totalSum = +i['cnt'] * i['price'];
             current[i['date_buy'].getDay()] = i['cnt'];

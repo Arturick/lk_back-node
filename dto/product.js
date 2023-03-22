@@ -55,13 +55,13 @@ class Product {
                         product = await connection.query(sqlScript);
                         i['plan'] += +product[0][0]['cnt'];
                         i['ids'] = [];
-                        sqlScript = sort == 1 ? `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}` : `SELECT id as ids FROM client t WHERE t.group = '${i['group']}' AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        sqlScript = sort == 1 ? `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']}` : `SELECT id as ids FROM client t WHERE t.group = '${i['group']}' AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         console.log(i['grafik']);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
                         }
-                        sqlScript = sort == 1 ? `SELECT id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}` : `SELECT id as ids FROM client_temp t WHERE t.group = '${i['group']}' AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        sqlScript = sort == 1 ? `SELECT id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']}` : `SELECT id as ids FROM client_temp t WHERE t.group = '${i['group']}' AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
@@ -77,19 +77,19 @@ class Product {
                         sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']} AND \`size\` = '${i['size']}' ` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND grafik = '${i['grafik']}' `;
                         let product = await connection.query(sqlScript);
                         i['fact'] = product[0][0]['cnt'];
-                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1}  AND grafik= '${i['grafik']}'`;
+                        sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND status IN(2,3,4,5,6,7,8) AND  task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1}  AND grafik= '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         i['plan'] += +product[0][0]['cnt'];
                         i['ids'] = [];
                         let dt =   i['date'].getDate()  < 10 ? `0${i['date'].getDate()}`: i['date'].getDate();
                         let mth = i['date'].getMonth() + 1< 10 ? `0${i['date'].getMonth() + 1}`: i['date'].getMonth() + 1;
-                        i['date'] = `${i['date'].getFullYear()}-${mth}-${dt}`;sqlScript = sort == 1 ? `SELECT *, id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        i['date'] = `${i['date'].getFullYear()}-${mth}-${dt}`;sqlScript = sort == 1 ? `SELECT *, id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND  article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         console.log(sqlScript);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
                         }
-                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']}AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         for(let j of product[0]){
                             i['ids'].push(j['ids']);
