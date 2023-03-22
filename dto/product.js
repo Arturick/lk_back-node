@@ -1,4 +1,6 @@
 const connection = require('../db-connection');
+const buffer = require("buffer");
+const {toBase64} = require("request/lib/helpers");
 
 const reportTime = {
 
@@ -36,13 +38,16 @@ class Product {
                     }
 
                     for(let i of answer[0]){
-                        i['date'] = i['date']  ? i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['date'];
+                        //i['date'] = i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
                         //i['grafik'] = i['grafik'] ? i['grafik'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0] : i['grafik'];
+
                         let date = new Date(i['grafik']);
                         let dt = date.getDate()  < 10 ? `0${date.getDate()}`: date.getDate();
                         let mth = date.getMonth() + 1< 10 ? `0${date.getMonth() + 1}`: date.getMonth() + 1;
                         i['grafik'] = `${date.getFullYear()}-${mth}-${dt}`;
-
+                        dt =   i['date'].getDate()  < 10 ? `0${i['date'].getDate()}`: i['date'].getDate();
+                        mth = i['date'].getMonth() + 1< 10 ? `0${i['date'].getMonth() + 1}`: i['date'].getMonth() + 1;
+                        i['date'] = `${i['date'].getFullYear()}-${mth}-${dt}`;
                         sqlScript = sort == 1 ? `SELECT *, COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND article = ${i['art']}` : `SELECT COUNT(*) as cnt FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND grafik = '${i['grafik']}' `;
                         let product = await connection.query(sqlScript);
                         i['fact'] = product[0][0]['cnt'];
@@ -76,8 +81,9 @@ class Product {
                         product = await connection.query(sqlScript);
                         i['plan'] += +product[0][0]['cnt'];
                         i['ids'] = [];
-                        i['date'] = i['date'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
-                        sqlScript = sort == 1 ? `SELECT *, id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
+                        let dt =   i['date'].getDate()  < 10 ? `0${i['date'].getDate()}`: i['date'].getDate();
+                        let mth = i['date'].getMonth() + 1< 10 ? `0${i['date'].getMonth() + 1}`: i['date'].getMonth() + 1;
+                        i['date'] = `${i['date'].getFullYear()}-${mth}-${dt}`;sqlScript = sort == 1 ? `SELECT *, id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND article = ${i['art']} AND \`size\` = '${i['size']}'` : `SELECT id as ids FROM client t WHERE t.group = ${i['group']} AND task1 = ${task1} AND grafik = '${i['grafik']}'`;
                         product = await connection.query(sqlScript);
                         console.log(sqlScript);
                         for(let j of product[0]){
@@ -104,8 +110,9 @@ class Product {
                         if(!i['date_add']){
                             i['date_add'] = new Date();
                         }
-                        i['date'] = i['date_add'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
-                        product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1}`);
+                        let dt =   i['date_add'].getDate()  < 10 ? `0${i['date_add'].getDate()}`: i['date_add'].getDate();
+                        let mth = i['date_add'].getMonth() + 1< 10 ? `0${i['date_add'].getMonth() + 1}`: i['date_add'].getMonth() + 1;
+                        i['date'] = `${i['date_add'].getFullYear()}-${mth}-${dt}`;product = await connection.query(`SELECT *, COUNT(*) as cnt FROM client_temp t WHERE t.group = ${i['group']} AND task1 = ${task1}`);
                         i['plan'] += product[0][0]['cnt'];
                         products.push(i);
                     }
@@ -119,7 +126,9 @@ class Product {
                     console.log(i['group']);
                     if(already.indexOf(i['article']) != -1){continue;}
                     i['fact'] = 0;
-                    i['date'] = i['date_add'].toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').toLocaleString().replace('/', '-').replace('.', '-').replace('\\', '-').split(',')[0];
+                    let dt =   i['date'].getDate()  < 10 ? `0${i['date'].getDate()}`: i['date'].getDate();
+                    let mth = i['date'].getMonth() + 1< 10 ? `0${i['date'].getMonth() + 1}`: i['date'].getMonth() + 1;
+                    i['date'] = `${i['date'].getFullYear()}-${mth}-${dt}`;
                     products.push(i);
                 }
 
@@ -236,8 +245,9 @@ VALUES ('черновик', 'wb', '${i['type']}', '${i['article']}', '${i['size'
     }
 
     async setReview(task1, product){
-        let sqlScript = `UPDATE client SET screen_otziv = '${product['photos']}', text_otziv = '${product['review']}', rating_otziv = '${product['rating']}', status = 5 WHERE task1 = ${task1} AND id = ${product['id']}`;
-
+        let text = toBase64(product['review']);
+        console.log(text);
+        let sqlScript = `UPDATE client SET screen_otziv = '${product['photos']}', text_otziv = '${text}', rating_otziv = '${product['rating']}', status = 5 WHERE task1 = ${task1} AND id = ${product['id']}`;
         await connection.query(sqlScript);
     }
 
@@ -309,20 +319,20 @@ VALUES (${i['task1']}, '${i['grafik']}', 'wb', '${i['type']}', ${i['article']}, 
 
         switch (type) {
             case 1:
-                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND mp = 'wb' GROUP BY article,date_buy, price`;
+                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND mp = 'wb' GROUP BY article, date_buy, price, \`group\``;
                 break;
             case 2:
-                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > DATE_SUB(NOW(), INTERVAL 168 HOUR) AND mp = 'wb'  GROUP BY article,date_buy, price`;
+                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > DATE_SUB(NOW(), INTERVAL 168 HOUR) AND mp = 'wb'  GROUP BY article,date_buy, price, \`group\``;
                 break;
             case 3:
-                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy = CURDATE()  AND mp = 'wb' GROUP BY article,date_buy`;
+                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy = CURDATE()  AND mp = 'wb' GROUP BY article,date_buy, \`group\`, price`;
                 break;
             case 4:
-                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > DATE_SUB(NOW(), INTERVAL 744 HOUR)  AND mp = 'wb' GROUP BY article,date_buy, price`;
+                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > DATE_SUB(NOW(), INTERVAL 744 HOUR)  AND mp = 'wb' GROUP BY article,date_buy, price, \`group\``;
 
                 break;
             case 5:
-                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > '${dates[0]}' AND date_buy < '${dates[1]}'  AND mp = 'wb'   GROUP BY article,date_buy, price`;
+                sqlScript = `SELECT *, COUNT(*) as cnt FROM client WHERE task1 = ${task1} AND status IN(2,3,4,5,6,7,8) AND date_buy > '${dates[0]}' AND date_buy < '${dates[1]}'  AND mp = 'wb'   GROUP BY article,date_buy, price, \`group\``;
                 break;
         }
         let answer = await connection.query(sqlScript);

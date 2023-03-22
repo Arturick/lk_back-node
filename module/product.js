@@ -378,7 +378,6 @@ class product {
                 for(let j = 0; j < countDate; j++){
                     let dt = new Date(new Date(dates[0]).getTime() + (86400000 * j));
                     dt = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
-                    console.log(dt);
                     if(!buyCounts[i['article']][dt]){
                         buyCounts[i['article']][dt] = {count: 0, rcount: 0};
                     }
@@ -387,31 +386,6 @@ class product {
                     if(productCount <= 0){
                         break;
                     }
-
-                }
-            }
-        }
-        for(let i of items){
-            let productCount = i['rcount'];
-            if(!buyCounts[i['article']]){
-                buyCounts[i['article']] = {};
-            }
-            while(1 < 2){
-                if(productCount <= 0){
-                    break;
-                }
-                for(let j = 0; j < countDate; j++){
-                    let dt = new Date(new Date(dates[0]).getTime() + (86400000 * j));
-                    dt = `${dt.getFullYear()}-${dt.getMonth()+1}-${dt.getDate()}`;
-                    console.log(dt);
-                    if(!buyCounts[i['article']][dt]){
-                        buyCounts[i['article']][dt] = {count: 0, rcount: 0};
-                    }
-                    if(productCount <= 0){
-                        break;
-                    }
-                    productCount--;
-                    buyCounts[i['article']][dt].rcount++;
 
                 }
             }
@@ -810,7 +784,7 @@ class product {
             uppercase: true
         });
         let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
-        wb.write(process.env.URL_REPORT);
+        wb.write(procesыs.env.URL_REPORT);
         wb.write(linkOld);
         await productDTO.setReport(user['task1'], 'buyout', reportType[type], `${code}.xlsx`);
         return {};
@@ -1035,6 +1009,11 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 10).string(String(allPrice));
+        let code = generator.generateMultiple(5, {
+            length: 11,
+            numbers: true,
+            uppercase: true
+        });
         let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
         wb.write(process.env.URL_REPORT);
         wb.write(linkOld);
@@ -1220,6 +1199,11 @@ class product {
             },
         }));
         ws.cell(products.length + 4, 8).string(String(allCount));
+        let code = generator.generateMultiple(5, {
+            length: 11,
+            numbers: true,
+            uppercase: true
+        });
         let linkOld = `${process.env.URL_OLD_REPORT}/${code}.xlsx`;
         wb.write(process.env.URL_REPORT);
         wb.write(linkOld);

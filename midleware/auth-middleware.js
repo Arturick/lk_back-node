@@ -10,7 +10,9 @@ module.exports = async function(req, res, next){
         if(!isAuth || isAuth.userId != userId){
             throw Error();
         }
+
         let user = await userDB.getById(userId);
+        console.log(user);
         next(user);
     } catch (e) {
         return res.status(401).json({message: 'Ошибка авторизации'})

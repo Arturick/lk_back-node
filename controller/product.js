@@ -75,8 +75,10 @@ class Product {
       getDraft(user ,req, res, next){
         try {
             const {group} = req.body;
-             productModule.getDraft(user, group);
-            return res.json(answer.product(response));
+             productModule.getDraft(user, group).then(response => {
+                 return res.json(answer.product(response));
+             });
+
         } catch  (e) {
             next(e);
         }
@@ -125,8 +127,11 @@ class Product {
        parseExcel(req, res, next){
         try {
             console.log(21);
-             productModule.parseExcel(/*req.files*/);
-            return res.json(answer.product(response));
+             productModule.parseExcel(/*req.files*/)
+                 .then(response => {
+                     return res.json(answer.product(response));
+                 });
+
         } catch  (e) {
             next(e);
         }
@@ -149,8 +154,11 @@ class Product {
       getProductByApi(user ,req, res, next){
 
         try {
-             productModule.getProductByApi(user);
-            return res.json(answer.product(response));
+             productModule.getProductByApi(user)
+                 .then(response => {
+                     return res.json(answer.product(response));
+                 })
+
         } catch  (e) {
             next(e);
         }
@@ -173,8 +181,11 @@ class Product {
       updateDraft(user, req, res, next){
         try {
             const {group, items} = req.body;
-             productModule.updateDraft(user, group, items);
-            return res.json(answer.product(response));
+             productModule.updateDraft(user, group, items)
+                 .then(response => {
+                     return res.json(answer.product(response));
+                 });
+
         } catch  (e) {
             next(e);
         }
