@@ -8,7 +8,10 @@ class Product {
             productModule.findByArticle(article)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
 
 
         } catch  (e) {
@@ -36,7 +39,10 @@ class Product {
             productModule.sortBuyByDate(items, date)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
 
         } catch  (e) {
             next(e);
@@ -50,7 +56,10 @@ class Product {
             productModule.findByArticles(articles)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
 
         } catch  (e) {
             next(e);
@@ -65,7 +74,10 @@ class Product {
              productModule.getBuyout(user, sort, group)
                  .then(response => {
                      return res.json(answer.product(response));
-                 });
+                 })
+                 .catch(err => {
+                     next(err);
+                 })
 
         } catch  (e) {
             next(e);
@@ -77,7 +89,10 @@ class Product {
             const {group} = req.body;
              productModule.getDraft(user, group).then(response => {
                  return res.json(answer.product(response));
-             });
+             })
+                 .catch(err => {
+                     next(err);
+                 })
 
         } catch  (e) {
             next(e);
@@ -91,7 +106,10 @@ class Product {
              productModule.getDelete(user, id)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                 .catch(err => {
+                     next(err);
+                 })
 
         } catch  (e) {
             next(e);
@@ -104,7 +122,10 @@ class Product {
 
              productModule.saveReview(user, item).then(response => {
                  return res.json(answer.product(response));
-             });
+             })
+                 .catch(err => {
+                     next(err);
+                 })
 
         } catch  (e) {
             next(e);
@@ -118,7 +139,10 @@ class Product {
             productModule.getDelivery(user, date_get)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
         } catch  (e) {
             next(e);
         }
@@ -130,7 +154,10 @@ class Product {
              productModule.parseExcel(/*req.files*/)
                  .then(response => {
                      return res.json(answer.product(response));
-                 });
+                 })
+                 .catch(err => {
+                     next(err);
+                 })
 
         } catch  (e) {
             next(e);
@@ -145,7 +172,10 @@ class Product {
             productModule.getReview(user, article)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
         } catch  (e) {
             next(e);
         }
@@ -157,6 +187,9 @@ class Product {
              productModule.getProductByApi(user)
                  .then(response => {
                      return res.json(answer.product(response));
+                 })
+                 .catch(err => {
+                     next(err);
                  })
 
         } catch  (e) {
@@ -172,7 +205,10 @@ class Product {
             productModule.save(user, items)
                 .then(response => {
                     return res.json(answer.product(response));
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
         } catch  (e) {
             next(e);
         }
@@ -184,6 +220,9 @@ class Product {
              productModule.updateDraft(user, group, items)
                  .then(response => {
                      return res.json(answer.product(response));
+                 })
+                 .catch(err => {
+                     next(err);
                  });
 
         } catch  (e) {
@@ -199,6 +238,9 @@ class Product {
             productModule.saveDraft(user, items)
                 .then(response => {
                     return res.json(answer.product(response));
+                })
+                .catch(err => {
+                    next(err);
                 });
         } catch  (e) {
             next(e);
@@ -212,6 +254,9 @@ class Product {
              productModule.getGraph(user)
                  .then(response => {
                      return res.json(response);
+                 })
+                 .catch(err => {
+                     next(err);
                  });
 
         } catch  (e) {
@@ -226,6 +271,9 @@ class Product {
             productModule.reportBuyout(user,  dates)
                 .then(response => {
                     return res.json(answer.product(response));
+                })
+                .catch(err => {
+                    next(err);
                 });
         } catch  (e) {
             next(e);
@@ -239,6 +287,9 @@ class Product {
             productModule.buyoutReport(user, type, dates)
                 .then(response => {
                     return res.json(response);
+                })
+                .catch(err => {
+                    next(err);
                 });
 
 
@@ -253,7 +304,10 @@ class Product {
             productModule.deliveryReport(user, type, dates)
                 .then(response => {
                 return res.json(response);
-            });
+            })
+                .catch(err => {
+                    next(err);
+                });
 
 
 
@@ -269,6 +323,9 @@ class Product {
             productModule.reviewReport(user, type, dates)
                 .then(response => {
                     return res.json(response);
+                })
+                .catch(err => {
+                    next(err);
                 });
 
 
@@ -284,6 +341,9 @@ class Product {
             productModule.getReports(user, type)
                 .then(response => {
                     return res.json(response);
+                })
+                .catch(err => {
+                    next(err);
                 });
 
         } catch (e) {

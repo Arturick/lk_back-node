@@ -7,7 +7,10 @@ class Position {
             service.addKey(user, key, article)
                 .then(answer => {
                     return res.json(answer);
-                });
+                })
+                .catch(err => {
+                    next(err);
+                })
 
 
         } catch (e){

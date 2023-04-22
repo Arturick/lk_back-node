@@ -1216,6 +1216,10 @@ class product {
         let answer = await productDTO.getReport(user['task1'] ,type);
         return  answer;
     }
+
+    async setInterval(id, time){
+        return productDTO.setInterval(id, time);
+    }
 }
 
 //findPosition

@@ -10,6 +10,10 @@ const reportTime = {
 }
 
 class Product {
+
+    async setInterval(id, time){
+        let sqlScript = `UPDATE client_temp SET interval_buy WHERE id = ${id}`
+    }
     async getBuyout(task1, sort, group = false){
         let sqlScript = ``;
         let already = [];

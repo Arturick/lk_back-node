@@ -181,6 +181,7 @@ class ProductService {
                     {"name" : "Баркод", "key" : 'barcode', "text" : "Баркод", "value" : 'barcode', 'sortable' : false},
                     {"name" : "Запрос", "key" : 'search_key', "text" : "Запрос", "value" : 'search_key', 'sortable' : false},
                     {"name" : "Пол", "key" : 'sex', "text" : "Пол", "value" : 'sex', 'sortable' : false},
+                            {"name" : "Ожидание", "key" : 'intervalBuy', "text" : "Ожидание", "value" : 'intervalBuy', 'sortable' : false},
                     {"name" : "Дата выкупа", "key" : 'date', "text" : "Дата выкупа", "value" : 'date', 'sortable' : true},
                     {"name" : "Статус", "key" : 'status', "text" : "Статус", "value" : 'status', 'sortable' : true},
                             {"name" : "", "key" : 'del', "text" : "", "value" : 'del', 'sortable' : true},];
